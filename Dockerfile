@@ -1,6 +1,6 @@
 FROM nginx:1.16.0-alpine
 
-#docker file for challengeapp microservice
+#docker file for challengeplatform microservice
 # I have built this as a single container microservice to ease versioning
 
 MAINTAINER Robert Metcalf
