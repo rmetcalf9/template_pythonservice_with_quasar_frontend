@@ -1,0 +1,39 @@
+{"steps": [
+    { "type": "echo", "data": { "text": "challengeapp Dev Security Config"}},
+    { "type": "createTenant", "data": {
+      "tenantName": "challengeappDEV",
+      "description": "Autoconfig tenant for development testing",
+      "allowUserCreation": true,
+      "JWTCollectionAllowedOriginList": [ "https://api.metcarob.com", "http://localhost:8080", "http://127.0.0.1:8099" ]
+    }},
+    { "type": "addAuthProvider", "data": {
+      "tenantName": "challengeappDEV",
+      "menuText": "Internal Auth",
+      "iconLink": "",
+      "Type": "internal",
+      "AllowUserCreation": true,
+      "configJSON": {"userSufix": "@internalDataStore"},
+      "AllowLink": true,
+      "AllowUnlink": true,
+      "LinkText": "Internal Auth"
+    }},
+    { "type": "addInternalUserAccount", "data": {
+      "tenantName": "challengeappDEV",
+      "userID": "challengeAppAutoconfigTestUser",
+      "Username": "TestUser",
+      "Password": "TestUser",
+      "Roles": {
+        "challengeappDEV": [ "TestingGroupRole" ]
+      }
+    }},
+    { "type": "addInternalUserAccount", "data": {
+      "tenantName": "challengeappDEV",
+      "userID": "challengeAppAutoconfigAdminUser",
+      "Username": "TestAdmin",
+      "Password": "TestAdmin",
+      "Roles": {
+        "challengeappDEV": [ "TestingGroupRole", "challengeappadmin" ]
+      }
+    }}
+
+]}
