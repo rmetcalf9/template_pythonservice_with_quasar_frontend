@@ -2,7 +2,7 @@ import stores from '../store/index.js'
 import saasApiClient from '../saasApiClient'
 
 var prodDomain = 'platform.challengeswipe.com'
-var preferredTenantName = 'challengeplatform'
+var preferredTenantName = 'challengeapp'
 var preferredFullLocation = 'https://' + prodDomain + '/#/' + preferredTenantName + '/'
 
 var logger = function (msg, messagetype) {
