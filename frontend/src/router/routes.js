@@ -23,6 +23,9 @@ function allowNotLoggedInForPath (tenantName, path) {
   if (path === '/' + tenantName + '/') {
     return true
   }
+  if (path === '/' + tenantName + '/debug') {
+    return true
+  }
   // if (path.startsWith('/' + tenantName + '/login/')) {
   //   return true
   // }
