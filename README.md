@@ -16,4 +16,9 @@ Find and replace service name occurrences (templateservicename -> new name):
  - frontend/saasClientAPI
  - terraform main
  - local_terraform
+ - testContainer
+
+In codefresh.yml update the versions of build containers I use:
+ - RJM_BUILDQUASARAPP_IMAGE
+ - RJM_DOCKERWSCALLER_IMAGE
 
