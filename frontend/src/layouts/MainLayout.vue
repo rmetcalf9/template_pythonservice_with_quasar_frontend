@@ -133,7 +133,7 @@ export default {
       return window.location.host
     },
     isAdminUser () {
-      return this.$store.getters['saasUserManagementClientStore/hasRole']('challengeplatformadmin')
+      return this.$store.getters['saasUserManagementClientStore/hasRole']('templateservicenameadmin')
     },
     serverInfoVersion () {
       var endpoints = this.$store.getters['saasUserManagementClientStore/getEndpoints']

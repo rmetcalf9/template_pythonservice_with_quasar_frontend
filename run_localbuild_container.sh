@@ -6,10 +6,13 @@ if [[ ! -f ./VERSION ]]; then
   echo "VERSION dosen't exist - are you in correct directory?"
   exit 1
 fi
+DOCKER_USERNAME=metcarob
+DOCKER_IMAGENAME=templateservicename
+
 export RJM_VERSION=$(cat ./VERSION)
 export RJM_VERSION_UNDERSCORE=$(echo ${RJM_VERSION} | tr '.' '_')
-export RJM_IMAGE_TO_RUN=metcarob/challengeplatform:${RJM_VERSION}_localbuild
-export RJM_RUNNING_SERVICE_NAME=challengeplatform_${RJM_VERSION_UNDERSCORE}_localbuild
+export RJM_IMAGE_TO_RUN=${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${RJM_VERSION}_localbuild
+export RJM_RUNNING_SERVICE_NAME=${DOCKER_IMAGENAME}_${RJM_VERSION_UNDERSCORE}_localbuild
 
 echo "Launching image ${RJM_IMAGE_TO_RUN}"
 

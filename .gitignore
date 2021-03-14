@@ -4,3 +4,7 @@ objectstoredata
 comp001.txt
 comp002.txt
 
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+.terraform

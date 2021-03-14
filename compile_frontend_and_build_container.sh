@@ -2,10 +2,10 @@
 
 #Not used by codefresh as I am using build container instead
 
-#working directory is always challengeplatform root
+#working directory is always templateservicename root
 GITROOT=$(pwd)
 DOCKER_USERNAME=metcarob
-DOCKER_IMAGENAME=challengeplatform
+DOCKER_IMAGENAME=templateservicename
 VERSIONNUM=$(cat ./VERSION)
 QUASARBUILDIMAGE="metcarob/docker-build-quasar-app:0.0.12"
 
