@@ -26,6 +26,7 @@ steps:
       - export RJM_BUILDQUASARAPP_IMAGE="metcarob/docker-build-quasar-app:0.0.25"
       - export RJM_UNITTESTAPICONTIANER_IMAGE="metcarob/python_unittest_api_container:0.0.9"
       - export RJM_DOCKER_KONG_API_URL="http://tasks.kong:8001"
+      - export MEMSET_CLOUD_ROOT=/memset_cloud
       - cf_export RJM_VERSION=${RJM_VERSION}
       - cf_export RJM_VERSION_UNDERSCORE=${RJM_VERSION_UNDERSCORE}
       - cf_export RJM_MAJOR_VERSION=${RJM_MAJOR_VERSION}
@@ -37,6 +38,7 @@ steps:
       - cf_export RJM_BUILDQUASARAPP_IMAGE=${RJM_BUILDQUASARAPP_IMAGE}
       - cf_export RJM_UNITTESTAPICONTIANER_IMAGE=${RJM_UNITTESTAPICONTIANER_IMAGE}
       - cf_export RJM_DOCKER_KONG_API_URL=${RJM_DOCKER_KONG_API_URL}
+      - cf_export MEMSET_CLOUD_ROOT=${MEMSET_CLOUD_ROOT}
 
   # These are the application unit tests
   unit_test:
