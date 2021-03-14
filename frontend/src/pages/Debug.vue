@@ -66,7 +66,7 @@ export default {
   data () {
     return {
       possibleTenants: [
-        '', 'challengeappDEV', 'challengeappstage', 'challengeapp'
+        '', 'defaulttenant'
       ]
     }
   },
@@ -96,7 +96,7 @@ export default {
       return this.$store.getters['saasUserManagementClientStore/getDebugStats']
     },
     isAdminUser () {
-      return this.$store.getters['saasUserManagementClientStore/hasRole']('challengeappadmin')
+      return this.$store.getters['saasUserManagementClientStore/hasRole']('templateservicenameadmin')
     },
     isLoggedIn () {
       return this.$store.getters['saasUserManagementClientStore/isLoggedIn']

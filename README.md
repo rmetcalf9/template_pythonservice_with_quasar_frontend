@@ -77,6 +77,8 @@ Change clone step in codefresh so it has either github or gitlab.
 
 If the deployment works we should be good!
 
+ - https://api.metcarob.com/templateservicename/v0/public/web/frontend/#/ works
+
 ## Finally
 
  - Add endpoint to my service monitoring. (At least serverinfo and index pages)

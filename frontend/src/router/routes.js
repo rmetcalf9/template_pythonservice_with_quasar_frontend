@@ -2,7 +2,7 @@ import stores from '../store/index.js'
 import saasApiClient from '../saasApiClient'
 
 var prodDomain = 'platform.challengeswipe.com'
-var preferredTenantName = 'challengeapp'
+var preferredTenantName = 'defaulttenant'
 var preferredFullLocation = 'https://' + prodDomain + '/#/' + preferredTenantName + '/'
 
 var logger = function (msg, messagetype) {
@@ -84,7 +84,7 @@ function redirectToProperDomain () {
 }
 
 function redirectToURLWithExpandedCampaignParams () {
-  var redirectUTMSource = 'challengeapp'
+  var redirectUTMSource = 'defaulttenant'
   var urlParams = new URLSearchParams(window.location.search)
   if (urlParams.has('l')) {
     // Auto tag an internal campaign

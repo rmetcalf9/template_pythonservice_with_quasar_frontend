@@ -1,13 +1,13 @@
 {"steps": [
-    { "type": "echo", "data": { "text": "challengeapp Dev Security Config"}},
+    { "type": "echo", "data": { "text": "templateservicename Dev Security Config"}},
     { "type": "createTenant", "data": {
-      "tenantName": "challengeappDEV",
+      "tenantName": "defaulttenant",
       "description": "Autoconfig tenant for development testing",
       "allowUserCreation": true,
       "JWTCollectionAllowedOriginList": [ "https://api.metcarob.com", "http://localhost:8080", "http://127.0.0.1:8099" ]
     }},
     { "type": "addAuthProvider", "data": {
-      "tenantName": "challengeappDEV",
+      "tenantName": "defaulttenant",
       "menuText": "Internal Auth",
       "iconLink": "",
       "Type": "internal",
@@ -18,21 +18,21 @@
       "LinkText": "Internal Auth"
     }},
     { "type": "addInternalUserAccount", "data": {
-      "tenantName": "challengeappDEV",
-      "userID": "challengeAppAutoconfigTestUser",
+      "tenantName": "defaulttenant",
+      "userID": "templateservicenameAutoconfigTestUser",
       "Username": "TestUser",
       "Password": "TestUser",
       "Roles": {
-        "challengeappDEV": [ "TestingGroupRole" ]
+        "defaulttenant": [ "TestingGroupRole" ]
       }
     }},
     { "type": "addInternalUserAccount", "data": {
-      "tenantName": "challengeappDEV",
-      "userID": "challengeAppAutoconfigAdminUser",
+      "tenantName": "defaulttenant",
+      "userID": "templateservicenameAutoconfigAdminUser",
       "Username": "TestAdmin",
       "Password": "TestAdmin",
       "Roles": {
-        "challengeappDEV": [ "TestingGroupRole", "challengeappadmin" ]
+        "defaulttenant": [ "TestingGroupRole", "templateservicenameadmin" ]
       }
     }}
 

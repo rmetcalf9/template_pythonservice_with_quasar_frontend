@@ -67,7 +67,7 @@ steps:
   build_the_test_image:
     working_directory: ${{main_clone}}/services/testContainer
     type: build
-    image_name: metcarob/challengeapptest
+    image_name: metcarob/${{RJM_WS_NAME}}test
     tag: develop
     dockerfile: ./Dockerfile
 

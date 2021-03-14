@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "challengeapp"
+echo "templateservicename"
 
 SAAS_USERMANAGEMENT_CONTAINER=metcarob/saas_user_management:0.0.152
 
