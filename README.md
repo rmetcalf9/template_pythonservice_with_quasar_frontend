@@ -29,7 +29,10 @@ Run commands in new repo root:
 
  - Check coderelease.props is correct github/gitlab
 
- # Pre-DeployTesting
+ - Check the python app requirements are the latest
+ - Check the python app dependencies match the test container
+
+# Pre-DeployTesting
 
  - ./services/continous_test.sh works
  - ./services/run_app_developer.sh works
@@ -68,7 +71,13 @@ EOF
 
 Setup project in codefresh
 
+Change clone step in codefresh so it has either github or gitlab.
+
 ## Deploy testing
 
 If the deployment works we should be good!
+
+## Finally
+
+ - Add endpoint to my service monitoring. (At least serverinfo and index pages)
 
