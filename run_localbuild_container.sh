@@ -56,7 +56,7 @@ docker service create --name ${RJM_RUNNING_SERVICE_NAME} \
 -e APIAPP_DEFAULTMASTERTENANTJWTCOLLECTIONALLOWEDORIGINFIELD="http://localhost" \
 -e APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN="http://localhost" \
 -e APIAPP_OBJECTSTORECONFIG="{\"Type\": \"SimpleFileStore\",\"BaseLocation\": \"/ext_volume/services/objectstoredata\"}" \
---publish 80:80 \
+--publish 8095:80 \
 ${RJM_IMAGE_TO_RUN}
 RES=$?
 if [ ${RES} -ne 0 ]; then

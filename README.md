@@ -26,11 +26,14 @@ Run commands in new repo root:
  - mkdir /services/objectstoredata
  - in /frontend run npm install
  - in /frontend run npm audit fix
- - in /frontend run quasar dev
 
 ## Testing
 
-./services/continous_test.sh works
-./services/run_app_developer.sh works
-
+ - ./services/continous_test.sh works
+ - ./services/run_app_developer.sh works
+ - /frontend run quasar dev works
+ - ./run_all_parts_on_dev_machine.sh - check serverinfo is being read correctly
+ - ./compile_frontend_and_build_container.sh works
+ - ./run_localbuild_container.sh works
+ 
 
