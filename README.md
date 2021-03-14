@@ -6,7 +6,7 @@ my personal app infrastructure.
 This Template repo has a simple app with a flask python backend, a quasar frontend, docker image build and codefresh deployment.
 I have also extended it for with my standard Terraform setup.
 
-## Usage
+## Pre-deploy setup
 
 Find and replace service name occurrences (templateservicename -> new name):
 
@@ -29,33 +29,7 @@ Run commands in new repo root:
 
  - Check coderelease.props is correct github/gitlab
 
- - Create secret (saas_templateservicename_objectstore_config_dynamodb_cached) in infrastructure
-(Note maybe for AWS I want to create a user for this service)
-```
-docker secret create saas_templateservicename_objectstore_config_dynamodb_cached - <<EOF
-{
-  "Type": "Caching",
-  "DefaultPolicy": {
-    "cache": true,
-    "maxCacheSize": 40,
-    "cullToSize": 30,
-    "timeout": 60000
-  },
-  "ObjectTypeOverride": {},
-  "Main": {
-    "Type": "DynamoDB",
-    "aws_access_key_id": "xx",
-    "aws_secret_access_key": "yy",
-    "region_name": "eu-west-2",
-    "endpoint_url": "None",
-    "single_table_mode": "True",
-    "objectPrefix": "templateservicename"
-  }
-}
-EOF
-```
-
-## Testing
+ # Pre-DeployTesting
 
  - ./services/continous_test.sh works
  - ./services/run_app_developer.sh works
@@ -64,4 +38,37 @@ EOF
  - ./compile_frontend_and_build_container.sh works
  - ./run_localbuild_container.sh works and serverinfo is read correctly
 
+## Deploy Setup
+
+- Create secret (saas_templateservicename_objectstore_config_dynamodb_cached) in infrastructure
+(Note maybe for AWS I want to create a user for this service)
+```
+docker secret create saas_templateservicename_objectstore_config_dynamodb_cached - <<EOF
+{
+ "Type": "Caching",
+ "DefaultPolicy": {
+   "cache": true,
+   "maxCacheSize": 40,
+   "cullToSize": 30,
+   "timeout": 60000
+ },
+ "ObjectTypeOverride": {},
+ "Main": {
+   "Type": "DynamoDB",
+   "aws_access_key_id": "xx",
+   "aws_secret_access_key": "yy",
+   "region_name": "eu-west-2",
+   "endpoint_url": "None",
+   "single_table_mode": "True",
+   "objectPrefix": "templateservicename"
+ }
+}
+EOF
+```
+
+Setup project in codefresh
+
+## Deploy testing
+
+If the deployment works we should be good!
 
