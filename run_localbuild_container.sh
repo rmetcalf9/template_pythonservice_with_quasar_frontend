@@ -16,6 +16,8 @@ export RJM_RUNNING_SERVICE_NAME=${DOCKER_IMAGENAME}_${RJM_VERSION_UNDERSCORE}_lo
 
 echo "Launching image ${RJM_IMAGE_TO_RUN}"
 
+CONTAINER_EXTPORT80=8095
+
 ##Check if container image exists
 docker image inspect ${RJM_IMAGE_TO_RUN} > /dev/null
 RES=$?
@@ -50,13 +52,13 @@ docker service create --name ${RJM_RUNNING_SERVICE_NAME} \
 --mount type=bind,source=$(pwd),destination=/ext_volume \
 --secret saas_jwtsecret \
 -e APIAPP_JWTSECRETFILE=/run/secrets/saas_jwtsecret \
--e APIAPP_APIURL=${EXTURL}:${EXTPORT80}/api \
--e APIAPP_APIDOCSURL=${EXTURL}:${EXTPORT80}/public/web/apidocs \
--e APIAPP_FRONTENDURL=${EXTURL}:${EXTPORT80}/public/web/frontend \
+-e APIAPP_APIURL=${EXTURL}:${CONTAINER_EXTPORT80}/api \
+-e APIAPP_APIDOCSURL=${EXTURL}:${CONTAINER_EXTPORT80}/public/web/apidocs \
+-e APIAPP_FRONTENDURL=${EXTURL}:${CONTAINER_EXTPORT80}/public/web/frontend \
 -e APIAPP_DEFAULTMASTERTENANTJWTCOLLECTIONALLOWEDORIGINFIELD="http://localhost" \
 -e APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN="http://localhost" \
 -e APIAPP_OBJECTSTORECONFIG="{\"Type\": \"SimpleFileStore\",\"BaseLocation\": \"/ext_volume/services/objectstoredata\"}" \
---publish 8095:80 \
+--publish ${CONTAINER_EXTPORT80}:80 \
 ${RJM_IMAGE_TO_RUN}
 RES=$?
 if [ ${RES} -ne 0 ]; then
@@ -66,7 +68,7 @@ if [ ${RES} -ne 0 ]; then
 fi
 
 echo "Complete"
-echo "Start from http://127.0.0.1/public/web/frontend/#/"
+echo "Start from http://127.0.0.1:${CONTAINER_EXTPORT80}/public/web/frontend/#/"
 echo ""
 echo "End docker service rm ${RJM_RUNNING_SERVICE_NAME} to stop"
 echo ""

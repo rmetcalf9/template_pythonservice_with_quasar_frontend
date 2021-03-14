@@ -72,7 +72,14 @@ function registerEndpoints (stores, prodDomain, runtype, tenantName) {
       stores.dispatch('saasUserManagementClientStore/registerEndpoint', {
         endpoint: endpointName,
         apiPrefixIdentificationProcessConfig: {
-          possibleApiPrefixes: [{ prefix: 'http://localhost:8098', connectingthroughnginx: false, apitype: 'public' }]
+          // these lines appear in the order they are attempted
+          // first we are trying ./run_app_developer.sh which will be on different ports
+          // then we are trying running via a container where the frontend and
+          // python app are on the same port
+          possibleApiPrefixes: [
+            { prefix: 'http://localhost:8098', connectingthroughnginx: false, apitype: 'public' },
+            { prefix: window.location.protocol + '//' + window.location.host, connectingthroughnginx: true, apitype: 'public' }
+          ]
         },
         finishEndPointIdentificationHook: finishEndPointIdentificationHookFN
       })

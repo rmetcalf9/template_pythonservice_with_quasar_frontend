@@ -34,6 +34,6 @@ Run commands in new repo root:
  - /frontend run quasar dev works
  - ./run_all_parts_on_dev_machine.sh - check serverinfo is being read correctly
  - ./compile_frontend_and_build_container.sh works
- - ./run_localbuild_container.sh works
- 
+ - ./run_localbuild_container.sh works and serverinfo is read correctly
+
 
