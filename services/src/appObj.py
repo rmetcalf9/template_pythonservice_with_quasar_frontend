@@ -48,6 +48,17 @@ class appObjClass(parAppObj):
       print(err.args) # the arguments that the exception has been called with.
       raise(InvalidObjectStoreConfigInvalidJSONException)
 
+    if isinstance(objectStoreConfigDict, str):
+      # Codfresh container test has problems passing json this deals with it's input
+      print("APIAPP_OBJECTSTORECONFIG parsing First JSON pass gave string")
+      #####print("XXX", objectStoreConfigDict) (This debug comment may display a password)
+      objectStoreConfigDict = json.loads(objectStoreConfigDict)
+
+    if not objectStoreConfigDict is None:
+      if not isinstance(objectStoreConfigDict, dict):
+        print("ObjectStoreConfig did not evaluate to a dictionary")
+        raise(InvalidObjectStoreConfigInvalidJSONException)
+
     self.APIAPP_OBJECTSTOREDETAILLOGGING = readFromEnviroment(
       env=env,
       envVarName='APIAPP_OBJECTSTOREDETAILLOGGING',
