@@ -22,3 +22,15 @@ In codefresh.yml update the versions of build containers I use:
  - RJM_BUILDQUASARAPP_IMAGE
  - RJM_DOCKERWSCALLER_IMAGE
 
+Run commands in new repo root:
+ - mkdir /services/objectstoredata
+ - in /frontend run npm install
+ - in /frontend run npm audit fix
+ - in /frontend run quasar dev
+
+## Testing
+
+./services/continous_test.sh works
+./services/run_app_developer.sh works
+
+
