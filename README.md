@@ -27,6 +27,34 @@ Run commands in new repo root:
  - in /frontend run npm install
  - in /frontend run npm audit fix
 
+ - Check coderelease.props is correct github/gitlab
+
+ - Create secret (saas_templateservicename_objectstore_config_dynamodb_cached) in infrastructure
+(Note maybe for AWS I want to create a user for this service)
+```
+docker secret create saas_templateservicename_objectstore_config_dynamodb_cached - <<EOF
+{
+  "Type": "Caching",
+  "DefaultPolicy": {
+    "cache": true,
+    "maxCacheSize": 40,
+    "cullToSize": 30,
+    "timeout": 60000
+  },
+  "ObjectTypeOverride": {},
+  "Main": {
+    "Type": "DynamoDB",
+    "aws_access_key_id": "xx",
+    "aws_secret_access_key": "yy",
+    "region_name": "eu-west-2",
+    "endpoint_url": "None",
+    "single_table_mode": "True",
+    "objectPrefix": "templateservicename"
+  }
+}
+EOF
+```
+
 ## Testing
 
  - ./services/continous_test.sh works
