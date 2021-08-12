@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          <div @click="clicktoolbartitle">Challenge Swipe</div>
+          <div @click="clicktoolbartitle">templateservicename</div>
         </q-toolbar-title>
         <div v-if="serverInfoVersionMatchesCodeBaseVersion">Version {{ serverInfoVersion }}</div>
         <div v-if="!serverInfoVersionMatchesCodeBaseVersion">Version {{ serverInfoVersion }}
