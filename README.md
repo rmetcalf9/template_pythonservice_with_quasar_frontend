@@ -19,7 +19,7 @@ Find and replace service name occurrences (templateservicename -> new name):
  - testContainer
 
 In codefresh.yml update the versions of build containers I use:
- - RJM_BUILDQUASARAPP_IMAGE
+ - RJM_BUILDQUASARAPP_IMAGE **Also change this one in the ./compile_frontend_and_build_container.sh script**
  - RJM_DOCKERWSCALLER_IMAGE
 
 Run commands in new repo root:
