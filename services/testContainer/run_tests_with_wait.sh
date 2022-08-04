@@ -3,5 +3,5 @@
 echo "Waiting to allow other container to start..."
 sleep 5
 echo "Wait over"
-nosetests --rednose /test
+python3 -m pytest /test
 exit $?

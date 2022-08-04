@@ -1,9 +1,9 @@
-flask==1.0.2
-flask_restplus==0.11.0
-werkzeug==0.15.5
+flask==2.0.3
+flask_restx==0.5.1
+werkzeug==2.1.2
 pytz==2019.3
-baseapp_for_restapi_backend_with_swagger==0.5.22
+baseapp_for_restapi_backend_with_swagger==0.5.28
 pyjwt==1.7.1
-object_store_abstraction==0.3.40
+object_store_abstraction==0.3.45
 
-requests==2.20.1
+requests==2.28.1

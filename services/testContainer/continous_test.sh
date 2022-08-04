@@ -9,13 +9,13 @@ export TESTPARAM_ENDPOINTURL=http://localhost:8095
 export TESTPARAM_THROUGHKONG="False"
 
 if [ $# -eq 0 ]; then
-  until ack -f --python ./test | entr -d nosetests --rednose; do sleep 1; done
+  until ack -f --python ./test | entr -d python3 -m pytest; do sleep 1; done
 else
   if [ $# -eq 1 ]; then
     echo "Testing ${1}"
-    until ack -f --python ./test | entr -d nosetests -a ${1} --rednose; do sleep 1; done
+    until ack -f --python ./test | entr -d python3 -m pytest -a ${1}; do sleep 1; done
   else
     echo "Testing ${1} with verbose option (Single Run)"
-    nosetests -v -a ${1} --rednose
+    python3 -m pytest -v -a ${1}
   fi
 fi
