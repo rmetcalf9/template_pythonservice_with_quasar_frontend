@@ -10,20 +10,20 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
-    "axios": "^0.18.1",
-    "core-js": "^3.6.5",
-    "quasar": "^1.0.0"
+    "@quasar/extras": "^1.15.1",
+    "axios": "^0.27.2",
+    "core-js": "^3.24.1",
+    "quasar": "^1.19.5"
   },
   "devDependencies": {
-    "@quasar/app": "^2.0.0",
+    "@quasar/app": "^2.4.1",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-loader": "^3.0.3",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.1.2",
     "workbox-webpack-plugin": "^5.1.4"
