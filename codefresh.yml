@@ -59,7 +59,7 @@ steps:
       - apk add --no-cache libressl-dev libxml2 libxslt libxslt-dev libxml2-dev
       - pip3 install --no-cache-dir -r ./src/requirements.txt
       - pip3 install --no-cache-dir -r ./testContainer/requirements.txt
-      - nosetests --rednose ./test
+      - python3 -m pytest ./test
 
   compile_frontend:
     stage: build
@@ -163,7 +163,7 @@ steps:
     image: ${{build_the_test_image}}
     working_directory: ${{main_clone}}/server
     commands:
-      - nosetests --rednose /test
+      - python3 -m pytest /test
     environment:
       - TESTPARAM_EXPECTED_CONTAINER_VERSION=${{RJM_VERSION}}
       - TESTPARAM_ENDPOINTURL=https://api.metcarob.com/${{RJM_WS_NAME}}/test/v${{RJM_MAJOR_VERSION}}
