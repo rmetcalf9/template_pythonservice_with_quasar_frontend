@@ -56,7 +56,6 @@ steps:
     image: ${{RJM_PYTHON_TEST_IMAGE}}
     working_directory: ${{main_clone}}/services
     commands:
-      - apk add --no-cache libressl-dev libxml2 libxslt libxslt-dev libxml2-dev
       - pip3 install --no-cache-dir -r ./src/requirements.txt
       - pip3 install --no-cache-dir -r ./testContainer/requirements.txt
       - python3 -m pytest ./test
