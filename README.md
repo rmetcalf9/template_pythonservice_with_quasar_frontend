@@ -18,6 +18,9 @@ Find and replace service name occurrences (templateservicename -> new name):
  - local_terraform
  - testContainer
 
+Find and replace defaulttenant to the tenant name. E.g. for saas_social I made the default social. This is for when the
+frontend connects to usermanagement.
+
 In codefresh.yml update the versions of build containers I use:
  - RJM_BUILDQUASARAPP_IMAGE **Also change this one in the ./compile_frontend_and_build_container.sh script**
  - RJM_DOCKERWSCALLER_IMAGE
