@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="viewstyle === 'item'">
-      <q-item clickable @click.native="clickLogout" v-if="isLoggedIn">
+      <q-item clickable @click="clickLogout" v-if="isLoggedIn">
         <q-item-section avatar>
           <q-icon color="primary" name="exit_to_app" />
         </q-item-section>
@@ -10,7 +10,7 @@
           <q-item-label caption>{{ LogoutTextCaption }}</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item clickable @click.native="clickLogin" v-if="!isLoggedIn">
+      <q-item clickable @click="clickLogin" v-if="!isLoggedIn">
         <q-item-section avatar>
           <q-icon color="primary" name="exit_to_app" />
         </q-item-section>
@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import { useUserManagementClientStoreStore } from 'stores/saasUserManagementClientStore'
+
 export default {
   name: 'saasUserManagementLoginItem',
   props: {
@@ -83,18 +85,22 @@ export default {
       default: 'primary'
     }
   },
+  setup () {
+    const store = useUserManagementClientStoreStore()
+    return { store }
+  },
   data () {
     return {
     }
   },
   methods: {
     clickSecuritySettings (event) {
-      var returnAddress = this.getReturnAddress()
-      window.location.href = this.$store.getters['saasUserManagementClientStore/getLoginUIURLFn'](undefined, '/SecuritySettings', returnAddress)
+      const returnAddress = this.getReturnAddress()
+      window.location.href = this.store.getLoginUIURLFn(undefined, '/SecuritySettings', returnAddress)
     },
     getReturnAddress () {
-      var thisQuasarPath = this.$router.currentRoute.path
-      var returnAddress = window.location.protocol + '//' + window.location.host + window.location.pathname + '#' + thisQuasarPath
+      const thisQuasarPath = this.$router.currentRoute.value.path
+      let returnAddress = window.location.protocol + '//' + window.location.host + window.location.pathname + '#' + thisQuasarPath
       if (this.ReturnAddressuasarPathOverride !== 'none') {
         returnAddress = window.location.protocol + '//' + window.location.host + window.location.pathname + '#' + this.ReturnAddressuasarPathOverride
       }
@@ -102,30 +108,17 @@ export default {
     },
     clickLogin (event) {
       // Divert user to login url
-      var returnAddress = this.getReturnAddress()
-
-      // console.log('clickLogin Debug')
-      // console.log('thisQuasarPath:', thisQuasarPath)
-      // console.log('returnAddress:', returnAddress)
-      // console.log('----')
-
-      // https://api.metcarob.com/saas_user_management/v0/public/web/frontend/#/thu/
-
-      window.location.href = this.$store.getters['saasUserManagementClientStore/getLoginUIURLFn'](undefined, '/', returnAddress)
-
-      // this.value.loggedIn = true
-      // this.$emit('input', this.value)
+      const returnAddress = this.getReturnAddress()
+      window.location.href = this.store.getLoginUIURLFn(undefined, '/', returnAddress)
     },
     clickLogout (event) {
-      this.$store.dispatch('saasUserManagementClientStore/logout')
+      this.store.logout()
       this.$emit('userloggedout', null)
     }
   },
   computed: {
     isLoggedIn () {
-      // In future might read a cookie to persist when remoutned
-      var res = this.$store.getters['saasUserManagementClientStore/isLoggedIn']
-      return res
+      return this.store.isLoggedIn
     }
   },
   mounted: function () {
@@ -135,6 +128,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

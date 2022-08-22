@@ -20,9 +20,15 @@
         <q-item>
           <q-item-section>
             <q-item-label>Login</q-item-label>
+            <div>Loginservice Info:<br/> {{ loginUIBaseURL }}</div>
             <div>isAdminUser: {{ isAdminUser }}</div>
             <div>isLoggedIn: {{ isLoggedIn }}</div>
-            <div>loginUIBaseURL:<br/> {{ loginUIBaseURL }}</div>
+          </q-item-section>
+        </q-item>
+        <q-item>
+          <q-item-section>
+            <q-item-label>Endpoint Info</q-item-label>
+            <div>{{ endpointInfo }}</div>
           </q-item-section>
         </q-item>
         <q-item>
@@ -34,11 +40,13 @@
            </q-item-section>
          </q-item>
          <q-item>
-           <q-item-section>
-            Debug Stats
-            <q-item-label caption>{{ debugStats }}</q-item-label>
-           </q-item-section>
-         </q-item>
+            <q-item-section>
+            <q-item-label>Test call backend</q-item-label>
+            <q-btn color="primary" label="Call backend ten times"
+                      @click="callbackend" >
+           </q-btn>
+            </q-item-section>
+          </q-item>
        </q-list>
        <div
           class="row"
@@ -60,17 +68,60 @@
 </style>
 
 <script>
+import { Notify } from 'quasar'
+import { useUserManagementClientStoreStore } from 'stores/saasUserManagementClientStore'
+import saasApiClientCallBackend from '../saasAPiClientCallBackend'
 
 export default {
   name: 'DebugInformation',
+  setup () {
+    const store = useUserManagementClientStoreStore()
+    return { store }
+  },
   data () {
     return {
       possibleTenants: [
-        '', 'defaulttenant'
+        '', 'social'
       ]
     }
   },
   methods: {
+    callbackend () {
+      this.callbackendInt({ numCallsToDo: 10 })
+    },
+    callbackendInt ({ numCallsToDo }) {
+      const pageObj = this
+      if (numCallsToDo === 0) {
+        return
+      }
+      const callback = {
+        ok: function (response) {
+          Notify.create({
+            color: 'positive',
+            message: 'Success response received - ' + JSON.stringify(response.data)
+          })
+          console.log(response)
+          pageObj.callbackendInt({ numCallsToDo: numCallsToDo - 1 })
+        },
+        error: function (response) {
+          Notify.create({
+            color: 'negative',
+            message: 'ERROR response received - not stopping!'
+          })
+          console.log('ERROR response received - not stopping!', response)
+          pageObj.callbackendInt({ numCallsToDo: numCallsToDo - 1 })
+        }
+      }
+      saasApiClientCallBackend.callApi({
+        prefix: 'info',
+        router: this.$router,
+        store: this.store,
+        path: '/serverinfo',
+        method: 'get',
+        postdata: undefined,
+        callback
+      })
+    },
     forcereload () {
       // Clear all caches - https://stackoverflow.com/questions/54376355/clear-workbox-cache-of-all-content
       caches.keys().then(cacheNames => {
@@ -92,17 +143,17 @@ export default {
     }
   },
   computed: {
-    debugStats () {
-      return this.$store.getters['saasUserManagementClientStore/getDebugStats']
-    },
     isAdminUser () {
-      return this.$store.getters['saasUserManagementClientStore/hasRole']('templateservicenameadmin')
+      return this.store.hasRole('saas_socialadmin')
     },
     isLoggedIn () {
-      return this.$store.getters['saasUserManagementClientStore/isLoggedIn']
+      return this.store.isLoggedIn
     },
     loginUIBaseURL () {
-      return this.$store.getters['saasUserManagementClientStore/loginUIBaseURL']
+      return this.store.loginService
+    },
+    endpointInfo () {
+      return this.store.endpointInfo
     }
   }
 }

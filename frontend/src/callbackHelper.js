@@ -1,7 +1,7 @@
 // This class contains functions to help callbacks
 
 function callbackWithError (callback, msg, obj) {
-  var retobj = {
+  const retobj = {
     message: msg,
     orig: obj
   }
@@ -17,7 +17,7 @@ function callbackWithNotImplemented (callback) {
 
 // Used as the error function of an axios call
 function webserviceError (callback, response) {
-  var rjmmsg = 'Error'
+  let rjmmsg = 'Error'
 
   if (typeof (response.response) === 'undefined') {
     if (typeof (response.message) === 'undefined') {
@@ -51,7 +51,7 @@ function getResponseStatusIfItHasOneOtherwiseNegativeOne (response) {
 }
 
 function getDoNothingCallback () {
-  var callback = {
+  const callback = {
     ok: function (response) {
       // return
     },
@@ -63,7 +63,7 @@ function getDoNothingCallback () {
 }
 
 function consoleLogCallback () {
-  var callback = {
+  const callback = {
     ok: function (response) {
       console.log('consoleLogCallback ok', response)
     },
@@ -89,12 +89,12 @@ function getErrorFromResponse (respError) {
 }
 
 export default {
-  callbackWithError: callbackWithError,
-  callbackWithSimpleError: callbackWithSimpleError,
-  callbackWithNotImplemented: callbackWithNotImplemented,
-  webserviceError: webserviceError,
-  getDoNothingCallback: getDoNothingCallback,
-  getErrorFromResponse: getErrorFromResponse,
-  getResponseStatusIfItHasOneOtherwiseNegativeOne: getResponseStatusIfItHasOneOtherwiseNegativeOne,
-  consoleLogCallback: consoleLogCallback
+  callbackWithError,
+  callbackWithSimpleError,
+  callbackWithNotImplemented,
+  webserviceError,
+  getDoNothingCallback,
+  getErrorFromResponse,
+  getResponseStatusIfItHasOneOtherwiseNegativeOne,
+  consoleLogCallback
 }
