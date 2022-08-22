@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          <div @click="clicktoolbartitle">saas_social</div>
+          <div @click="clicktoolbartitle">templateservicename</div>
         </q-toolbar-title>
 
         <div v-if="serverInfoVersionMatchesCodeBaseVersion">Version {{ serverInfoVersion }}</div>
@@ -150,7 +150,7 @@ export default defineComponent({
       return window.location.host
     },
     isAdminUser () {
-      return this.store.hasRole('saas_socialadmin')
+      return this.store.hasRole('templateservicenameadmin')
     },
     serverInfoVersion () {
       const endpoints = this.store.endpointInfo

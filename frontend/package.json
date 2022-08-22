@@ -1,8 +1,8 @@
 {
-  "name": "saas_social",
+  "name": "templateservicename",
   "version": "0.0.1",
-  "description": "saas_social",
-  "productName": "saas_social",
+  "description": "templateservicename",
+  "productName": "templateservicename",
   "author": "Robert Metcalf <rmetcalf9@googlemail.com>",
   "private": true,
   "scripts": {

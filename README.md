@@ -86,4 +86,3 @@ If the deployment works we should be good!
 ## Finally
 
  - Add endpoint to my service monitoring. (At least serverinfo and index pages)
-

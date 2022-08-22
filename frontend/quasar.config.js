@@ -148,9 +148,9 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: 'saas_social',
-        short_name: 'saas_social',
-        description: 'saas_social',
+        name: 'templateservicename',
+        short_name: 'templateservicename',
+        description: 'templateservicename',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
@@ -215,7 +215,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'saas_social'
+        appId: 'templateservicename'
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain

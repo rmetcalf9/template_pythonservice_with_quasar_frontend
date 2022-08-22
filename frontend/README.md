@@ -1,6 +1,6 @@
-# saas_social (saas_social)
+# templateservicename (templateservicename)
 
-saas_social
+templateservicename
 
 ## Install the dependencies
 ```bash

@@ -144,7 +144,7 @@ export default {
   },
   computed: {
     isAdminUser () {
-      return this.store.hasRole('saas_socialadmin')
+      return this.store.hasRole('templateservicenameadmin')
     },
     isLoggedIn () {
       return this.store.isLoggedIn
