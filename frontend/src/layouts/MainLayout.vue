@@ -68,7 +68,7 @@
         v-model="saasLogin"
         @userloggedout="userloggedout"
       />
-      <div v-if="tenantName !== 'social'">
+      <div v-if="tenantName !== 'defaulttenant'">
         <q-separator />
         <q-item>
           <q-item-section>

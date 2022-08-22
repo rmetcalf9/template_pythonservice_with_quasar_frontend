@@ -148,7 +148,7 @@ function globalBeforeEnter (to, from, next, callSrc) {
 }
 
 function redirectToURLWithExpandedCampaignParams () {
-  const redirectUTMSource = 'social'
+  const redirectUTMSource = 'defaulttenant'
   const urlParams = new URLSearchParams(window.location.search)
   if (urlParams.has('l')) {
     // Auto tag an internal campaign
