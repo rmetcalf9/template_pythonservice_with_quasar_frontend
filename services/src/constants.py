@@ -10,3 +10,7 @@ class customExceptionClass(Exception):
       self.id = iid
     self.text = text
 
+DefaultHasAccountRole="hasaccount"
+jwtHeaderName="jwt-auth-token"
+jwtCookieName="jwt-auth-token"
+loginCookieName="usersystemUserCredentials"

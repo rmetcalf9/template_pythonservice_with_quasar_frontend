@@ -9,6 +9,7 @@ from unittest.mock import patch
 import copy
 import uuid
 import base64
+from SessionMock import SessionMock
 
 import logging
 
