@@ -7,7 +7,7 @@ GITROOT=$(pwd)
 DOCKER_USERNAME=metcarob
 DOCKER_IMAGENAME=templateservicename
 VERSIONNUM=$(cat ./VERSION)
-QUASARBUILDIMAGE="metcarob/docker-build-quasar-app:0.0.12"
+QUASARBUILDIMAGE="metcarob/docker-build-quasar-app:0.0.30"
 
 #could be spa or pwa
 QUASARBUILDMODE=pwa
