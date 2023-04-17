@@ -26,7 +26,7 @@ In codefresh.yml update the versions of build containers I use:
  - RJM_DOCKERWSCALLER_IMAGE
 
 Run commands in new repo root:
- - mkdir /services/objectstoredata
+ - mkdir ./services/objectstoredata
  - in /frontend run npm install
  - in /frontend run npm audit fix
 
