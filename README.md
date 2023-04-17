@@ -25,6 +25,9 @@ In codefresh.yml update the versions of build containers I use:
  - RJM_BUILDQUASARAPP_IMAGE **Also change this one in the ./compile_frontend_and_build_container.sh script**
  - RJM_DOCKERWSCALLER_IMAGE
 
+In compile_and_build_container.sh update the following docker image to the latest:
+ - QUASARBUILDIMAGE="metcarob/docker-build-quasar-app:0.0.30"
+
 Run commands in new repo root:
  - mkdir ./services/objectstoredata
  - in /frontend run npm install
