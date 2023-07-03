@@ -3,21 +3,28 @@ File for the endpoint identification process code
 */
 import axios from 'axios'
 
-function startEndpointIdentificationProcess ({ endpoint, callback, rjmStateChange }) {
-  const initialEndpointInfo = rjmStateChange.getFromState('getEndpointInfo')(endpoint)
+function startEndpointIdentificationProcess ({ endpointName, callback, rjmStateChange }) {
+  if (typeof (endpointName) !== 'string') {
+    console.log('ERROR startEndpointIdentificationProcess wrong type of endpointName supplied', endpointName, typeof (endpointName))
+    throw new Error('ERROR startEndpointIdentificationProcess wrong type of endpointName supplied')
+  }
+  const initialEndpointInfo = rjmStateChange.getFromState('getEndpointInfo')(endpointName)
+  if (typeof (initialEndpointInfo) === 'undefined') {
+    console.log('ERROR - no endpoint info for endpoint name=', endpointName)
+  }
   if (initialEndpointInfo.endpointIdentificationProcessState !== 0) return
-  rjmStateChange.executeAction('setEndpointIdentificationProcessState', { endpoint, newState: 1 })
+  rjmStateChange.executeAction('setEndpointIdentificationProcessState', { endpointName, newState: 1 })
 
   const callbackInternal = {
-    ok: function ({ serverinfoResponse, endpoint, sucessfulapiprefix }) {
+    ok: function ({ serverinfoResponse, endpointName, sucessfulapiprefix }) {
       // // console.log('Success API response recieved')
       // // console.log('startEndpointIdentificationprocess Success', serverinfoResponse, sucessfulapiprefix)
       rjmStateChange.executeAction('finishedEndpointIdentificationProcess', {
-        endpoint,
+        endpointName,
         sucessfulapiprefix,
         serverInfo: serverinfoResponse.data
       })
-      const endpointInfo = rjmStateChange.getFromState('getEndpointInfo')(endpoint)
+      const endpointInfo = rjmStateChange.getFromState('getEndpointInfo')(endpointName)
       if (typeof (endpointInfo.finishEndPointIdentificationHook) !== 'undefined') {
         const param = {
           serverInfo: endpointInfo.serverInfo,
@@ -25,19 +32,19 @@ function startEndpointIdentificationProcess ({ endpoint, callback, rjmStateChang
         }
         endpointInfo.finishEndPointIdentificationHook(param)
       }
-      callback.ok({ serverinfoResponse, endpoint, sucessfulapiprefix })
+      callback.ok({ serverinfoResponse, endpointName, sucessfulapiprefix })
     },
     error: function (response) {
       // Need to watch for infinite loop
-      console.log('EndpointIdentificationprocess FAILED for', endpoint, ' with response ', response)
-      rjmStateChange.executeAction('setEndpointIdentificationProcessState', { endpoint, newState: 0 })
+      console.log('EndpointIdentificationprocess FAILED for', endpointName, ' with response ', response)
+      rjmStateChange.executeAction('setEndpointIdentificationProcessState', { endpointName, newState: 0 })
       callback.error(response)
     }
   }
   tryToReadServerInfoFromAllThesePossibleAPIPrefixes({
     possibleApiPrefixes: initialEndpointInfo.apiPrefixIdentificationProcessConfig.possibleApiPrefixes,
     callback: callbackInternal,
-    endpoint
+    endpointName
   })
 }
 
@@ -53,7 +60,7 @@ function getUrlToCall (prefixRecord, apiPath, orveridePublicPrivatePart) {
   return prefixRecord.prefix + '/api/' + apiTypeToUse + apiPath
 }
 
-function tryToReadServerInfoFromAllThesePossibleAPIPrefixes ({ possibleApiPrefixes, callback, endpoint }) {
+function tryToReadServerInfoFromAllThesePossibleAPIPrefixes ({ possibleApiPrefixes, callback, endpointName }) {
   if (possibleApiPrefixes.length === 0) {
     callback.error('Fail')
     return
@@ -72,13 +79,13 @@ function tryToReadServerInfoFromAllThesePossibleAPIPrefixes ({ possibleApiPrefix
       console.log('SUCCESS! - reached api at ' + config.url)
       callback.ok({
         serverinfoResponse: response,
-        endpoint,
+        endpointName,
         sucessfulapiprefix: prefixToTry
       })
     },
     (response) => {
       console.log('FAILED')
-      tryToReadServerInfoFromAllThesePossibleAPIPrefixes({ possibleApiPrefixes, callback, endpoint })
+      tryToReadServerInfoFromAllThesePossibleAPIPrefixes({ possibleApiPrefixes, callback, endpointName })
     }
   )
 }

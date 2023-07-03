@@ -133,7 +133,7 @@ function globalBeforeEnter (to, from, next, callSrc) {
     tenantName: to.params.tenantName,
     doneFn: function () {
       saasApiClient.startEndpointIdentificationProcess({
-        saasServiceName,
+	endpointName: saasServiceName,
         getRjmStateChangeFn: getRjmStateChangeObj
       })
     }

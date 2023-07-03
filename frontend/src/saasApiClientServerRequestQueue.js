@@ -8,10 +8,10 @@ import saasApiClientEndpointIdentificationProcess from './saasApiClientEndpointI
 
 function getStartAllBackendCallQueuesFn ({ curpath }) {
   return function ({ rjmStateChange, calledAtEndOfRefresh }) {
-    for (const endpoint in rjmStateChange.getFromState('endpointInfo')) {
+    for (const endpointName in rjmStateChange.getFromState('endpointInfo')) {
       processAPICallQueue({
         rjmStateChange,
-        endpoint: rjmStateChange.getFromState('getEndpointInfo')(endpoint),
+        endpoint: rjmStateChange.getFromState('getEndpointInfo')(endpointName),
         calledAtEndOfRefresh,
         curpath,
         startAllBackendCallQueuesFn: getStartAllBackendCallQueuesFn({ curpath })
@@ -22,10 +22,11 @@ function getStartAllBackendCallQueuesFn ({ curpath }) {
 
 function startEndpointIdentificationprocessThenStartToProcessQueue ({ rjmStateChange, endpoint, curpath, startAllBackendCallQueuesFn }) {
   const callback = {
-    ok: function ({ serverinfoResponse, endpoint, sucessfulapiprefix }) {
+    // TODO WRONG CALLBACK of startEndpointIdentificationProcess GIVES ENDPOINT NAME
+    ok: function ({ serverinfoResponse, endpointName, sucessfulapiprefix }) {
       processAPICallQueue({
         rjmStateChange,
-        endpoint,
+        endpoint: rjmStateChange.getFromState('getEndpointInfo')(endpointName),
         calledAtEndOfRefresh: false,
         curpath,
         startAllBackendCallQueuesFn
@@ -34,7 +35,7 @@ function startEndpointIdentificationprocessThenStartToProcessQueue ({ rjmStateCh
     error: function (response) {
     }
   }
-  saasApiClientEndpointIdentificationProcess.startEndpointIdentificationProcess({ endpoint, callback, rjmStateChange })
+  saasApiClientEndpointIdentificationProcess.startEndpointIdentificationProcess({ endpointName: endpoint.name, callback, rjmStateChange })
 }
 
 function processAPICallQueue ({ rjmStateChange, endpoint, calledAtEndOfRefresh, curpath, startAllBackendCallQueuesFn }) {
