@@ -271,9 +271,13 @@ export const useUserManagementClientStoreStore = defineStore('userManagementClie
       this.loggedInInfo = cookieData
       this.pendingRefreshToken = this.loggedInInfo.refresh.token
     },
-    registerEndpoint ({ endpoint, apiPrefixIdentificationProcessConfig, finishEndPointIdentificationHook }) {
-      this.endpointInfo[endpoint] = {
-        name: endpoint,
+    registerEndpoint ({ endpointName, apiPrefixIdentificationProcessConfig, finishEndPointIdentificationHook }) {
+      if (typeof (endpointName) !== 'string') {
+        console.log('ERROR Store registerEndpoint wrong type of endpointName supplied', endpointName, typeof (endpointName))
+        throw new Error('ERROR Store registerEndpoint wrong type of endpointName supplied')
+      }
+      this.endpointInfo[endpointName] = {
+        name: endpointName,
         apiCallQueue: [],
         queueProcessingInProgress: false,
         endpointIdentificationProcessState: 0,
@@ -286,23 +290,31 @@ export const useUserManagementClientStoreStore = defineStore('userManagementClie
     registerRequestUserReloginFn ({ requestUserReloginFn }) {
       this.requestUserReloginFn = requestUserReloginFn
     },
-    setEndpointIdentificationProcessState ({ endpoint, newState }) {
-      this.endpointInfo[endpoint].endpointIdentificationProcessState = newState
+    setEndpointIdentificationProcessState ({ endpointName, newState }) {
+      if (typeof (endpointName) !== 'string') {
+        console.log('ERROR Store setEndpointIdentificationProcessState wrong type of endpointName supplied', endpointName, typeof (endpointName))
+        throw new Error('ERROR Store setEndpointIdentificationProcessState wrong type of endpointName supplied')
+      }
+      this.endpointInfo[endpointName].endpointIdentificationProcessState = newState
     },
-    finishedEndpointIdentificationProcess ({ endpoint, sucessfulapiprefix, serverInfo }) {
+    finishedEndpointIdentificationProcess ({ endpointName, sucessfulapiprefix, serverInfo }) {
+      if (typeof (endpointName) !== 'string') {
+        console.log('ERROR Store finishedEndpointIdentificationProcess wrong type of endpointName supplied', endpointName, typeof (endpointName))
+        throw new Error('ERROR Store finishedEndpointIdentificationProcess wrong type of endpointName supplied')
+      }
       const newEndpointObject = {
-        name: endpoint,
+        name: endpointName,
         endpointIdentificationProcessState: 2,
         apiPrefix: sucessfulapiprefix,
         serverInfo,
         queueProcessingInProgress: false,
         // Unchanged properties below
-        apiPrefixIdentificationProcessConfig: this.endpointInfo[endpoint].apiPrefixIdentificationProcessConfig,
+        apiPrefixIdentificationProcessConfig: this.endpointInfo[endpointName].apiPrefixIdentificationProcessConfig,
         // Don't set apiCallQueue to empty list as calls may build up during endpoint identification
-        apiCallQueue: this.endpointInfo[endpoint].apiCallQueue,
-        finishEndPointIdentificationHook: this.endpointInfo[endpoint].finishEndPointIdentificationHook
+        apiCallQueue: this.endpointInfo[endpointName].apiCallQueue,
+        finishEndPointIdentificationHook: this.endpointInfo[endpointName].finishEndPointIdentificationHook
       }
-      this.endpointInfo[endpoint] = newEndpointObject
+      this.endpointInfo[endpointName] = newEndpointObject
     },
     processRecievedJWTretervialtoken ({ jwtretervialtoken, callback, curpath, startAllBackendCallQueuesFn }) {
       console.log('TODO REM processRecievedJWTretervialtoken processState=', this.loginService.processState)

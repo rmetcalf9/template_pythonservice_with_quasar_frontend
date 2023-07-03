@@ -95,7 +95,7 @@ export function registerEndpointsWithStore (params) {
     // https://api.metcarob.com/saas_linkvis/v0
     const possibleApiPrefixes = [{ prefix: 'https://api.metcarob.com/' + params.saasServiceName + '/v' + majorCodeVersion, connectingthroughnginx: true, apitype: 'public' }]
     rjmStateChange.executeAction('registerEndpoint', {
-      endpoint: params.saasServiceName,
+      endpointName: params.saasServiceName,
       apiPrefixIdentificationProcessConfig: {
         possibleApiPrefixes
       },
@@ -111,7 +111,7 @@ export function registerEndpointsWithStore (params) {
       })
       const possibleApiPrefixes2 = [{ prefix: prodVer.prefix, connectingthroughnginx: true, apitype: 'public' }]
       rjmStateChange.executeAction('registerEndpoint', {
-        endpoint: params.saasServiceName,
+        endpointName: params.saasServiceName,
         apiPrefixIdentificationProcessConfig: {
           possibleApiPrefixes: possibleApiPrefixes2
         },
@@ -125,7 +125,7 @@ export function registerEndpointsWithStore (params) {
       })
       if (!rjmStateChange.getFromState('getIsParticularEndpointsRegistered')(params.saasServiceName)) {
         const newEndpoint = {
-          endpoint: params.saasServiceName,
+          endpointName: params.saasServiceName,
           apiPrefixIdentificationProcessConfig: {
             // these lines appear in the order they are attempted
             // first we are trying ./run_app_developer.sh which will be on different ports
@@ -154,7 +154,7 @@ export function registerEndpointsWithStore (params) {
   rjmStateChange.executeAction('registerRequestUserReloginFn', { requestUserReloginFn: requestUserReloginINT })
 }
 
-function startEndpointIdentificationProcess ({ getRjmStateChangeFn, saasServiceName }) {
+function startEndpointIdentificationProcess ({ getRjmStateChangeFn, endpointName }) {
   const rjmStateChange = getRjmStateChangeFn()
   const callback = {
     ok: function ({ serverinfoResponse, endpoint, sucessfulapiprefix }) {
@@ -163,7 +163,7 @@ function startEndpointIdentificationProcess ({ getRjmStateChangeFn, saasServiceN
     }
   }
   saasApiClientEndpointIdentificationProcess.startEndpointIdentificationProcess({
-    endpoint: saasServiceName,
+    endpointName,
     callback,
     rjmStateChange
   })
