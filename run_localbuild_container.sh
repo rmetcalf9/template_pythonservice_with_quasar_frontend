@@ -1,13 +1,13 @@
 #!/bin/bash
 
 echo "Script to run a local container which can be accessed via container access descrubed in FRONTEND_NOTES"
+source ./_repo_vars.sh
 
 if [[ ! -f ./VERSION ]]; then
   echo "VERSION dosen't exist - are you in correct directory?"
   exit 1
 fi
 DOCKER_USERNAME=metcarob
-DOCKER_IMAGENAME=templateservicename
 
 export RJM_VERSION=$(cat ./VERSION)
 export RJM_VERSION_UNDERSCORE=$(echo ${RJM_VERSION} | tr '.' '_')
