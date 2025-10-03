@@ -2,7 +2,7 @@
 
 echo "templateservicename"
 
-SAAS_USERMANAGEMENT_CONTAINER=metcarob/saas_user_management:0.0.152
+source ../_repo_vars.sh
 
 SAAS_APIAPP_MASTERPASSWORDFORPASSHASH=wefgFvGFt5433e
 
@@ -11,16 +11,21 @@ SAAS_APIAPP_MASTERPASSWORDFORPASSHASH=wefgFvGFt5433e
 #  in this project in saasLinkvisCallapi.js
 EXTPORT80FORSECURITY=8099
 
-PYTHON_CMD=python3
-if [ E${EXTPYTHONCMD} != "E" ]; then
-  PYTHON_CMD=${EXTPYTHONCMD}
-fi
+PYTHON_CMD=python
+#if [ E${EXTPYTHONCMD} != "E" ]; then
+#  PYTHON_CMD=${EXTPYTHONCMD}
+#fi
+# We are using venv - see source command velow
+
 
 #pyCharm will run in project root directory. Check if we are here and if so then change int oservices directory
 if [ -d "./services" ]; then
   echo "Changing into services directory"
   cd ./services
 fi
+
+source ../.venv/bin/activate
+
 
 PYTHONVERSIONCHECKSCRIPT="import sys\nprint(\"Python version \" + str(sys.version_info))\nif sys.version_info[0] < 3:\n  exit(1)\nif sys.version_info[0] == 3:\n  if sys.version_info[1] < 6:\n    exit(1)\nexit(0)\n"
 printf "${PYTHONVERSIONCHECKSCRIPT}" | ${PYTHON_CMD}

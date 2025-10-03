@@ -38,6 +38,18 @@ Run commands in new repo root:
  - Check the python app requirements are the latest
  - Check the python app dependencies match the test container
 
+Use pycharm to create .venv in the root of repot.
+Activate it:
+
+source ../.venv/bin/activate
+
+Then run
+```
+pip install -r ./services/src/requirements.txt
+pip install -r ./services/testContainer/requirements.txt
+```
+
+
 # Pre-DeployTesting
 
  - ./services/continous_test.sh works
