@@ -72,8 +72,11 @@ export function refreshJWTToken (callback, curpath, startAllBackendCallQueuesFn)
       if (response.data.ThisTenantRoles.includes('hasaccount')) {
         const cookieToSave = response.data
         cookieToSave.loginTenantName = rjmStateChangeObj.getFromState('loginService').tenantName
+        function isDevMachine () {
+          return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname)
+        }        
         Cookies.set('saasUserManagementClientStoreCredentials', cookieToSave, {
-          secure: !window.location.href.includes('localhost'), // otherwise cookie not set on dev machines
+          secure: !isDevMachine(), // otherwise cookie not set on dev machines
           expires: 90 // expire in 90 days
         })
         rjmStateChangeObj2.executeAction('registerEndOfTokenRefreshSuccess', { responseData: response.data })
