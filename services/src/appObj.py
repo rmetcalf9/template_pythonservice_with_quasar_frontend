@@ -1,7 +1,7 @@
 #appObj.py - This file contains the main application object
 # to be constructed by app.py
 
-from baseapp_for_restapi_backend_with_swagger import AppObjBaseClass as parAppObj, readFromEnviroment
+from baseapp_for_restapi_backend_with_swagger import AppObjBaseClass as parAppObj, getReadFromEnviromentFn
 
 import constants
 import json
@@ -37,7 +37,14 @@ class appObjClass(parAppObj):
     super(appObjClass, self).init(env, serverStartTime, testingMode, serverinfoapiprefix='public/info')
     ##print("appOBj init")
 
-    objectStoreConfigJSON = readFromEnviroment(env, 'APIAPP_OBJECTSTORECONFIG', '{}', None)
+    objectStoreConfigJSON = getReadFromEnviromentFn(
+      env,
+      'APIAPP_OBJECTSTORECONFIG',
+      '{}',
+      None,
+      False,
+      self.vaultClient
+    )()
     objectStoreConfigDict = None
     try:
       if objectStoreConfigJSON != '{}':
@@ -59,13 +66,14 @@ class appObjClass(parAppObj):
         print("ObjectStoreConfig did not evaluate to a dictionary")
         raise(InvalidObjectStoreConfigInvalidJSONException)
 
-    self.APIAPP_OBJECTSTOREDETAILLOGGING = readFromEnviroment(
+    self.APIAPP_OBJECTSTOREDETAILLOGGING = getReadFromEnviromentFn(
       env=env,
       envVarName='APIAPP_OBJECTSTOREDETAILLOGGING',
       defaultValue='N',
       acceptableValues=['Y', 'N'],
-      nullValueAllowed=True
-    ).strip()
+      nullValueAllowed=True,
+      vaultClient=self.vaultClient
+    )().strip()
     if (self.APIAPP_OBJECTSTOREDETAILLOGGING=='Y'):
       print("APIAPP_OBJECTSTOREDETAILLOGGING set to Y - statement logging enabled")
 
