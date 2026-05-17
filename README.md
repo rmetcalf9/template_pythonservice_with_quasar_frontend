@@ -10,7 +10,7 @@ I have also extended it for with my standard Terraform setup.
 
 Find and replace service name occurrences (templateservicename -> new name):
 
- - codefresh.yml
+ - codefresh.yml TODDO REMOVE
  - Dockerfile
  - run localbuild
  - frontend/saasClientAPI
@@ -21,12 +21,7 @@ Find and replace service name occurrences (templateservicename -> new name):
 Find and replace defaulttenant to the tenant name. E.g. for saas_social I made the default social. This is for when the
 frontend connects to usermanagement.
 
-In codefresh.yml update the versions of build containers I use:
- - RJM_BUILDQUASARAPP_IMAGE **Also change this one in the ./compile_frontend_and_build_container.sh script**
- - RJM_DOCKERWSCALLER_IMAGE
-
-In compile_and_build_container.sh update the following docker image to the latest:
- - QUASARBUILDIMAGE="metcarob/docker-build-quasar-app:0.0.30"
+In _repo_vars update the versions of build containers I use:
 
 Run commands in new repo root:
  - mkdir ./services/objectstoredata
@@ -61,33 +56,14 @@ pip install -r ./services/testContainer/requirements.txt
 
 ## Deploy Setup
 
-- Create secret (saas_templateservicename_objectstore_config_dynamodb_cached) in infrastructure
-(Note maybe for AWS I want to create a user for this service)
-```
-docker secret create saas_templateservicename_objectstore_config_dynamodb_cached - <<EOF
-{
- "Type": "Caching",
- "DefaultPolicy": {
-   "cache": true,
-   "maxCacheSize": 40,
-   "cullToSize": 30,
-   "timeout": 60000
- },
- "ObjectTypeOverride": {},
- "Main": {
-   "Type": "DynamoDB",
-   "aws_access_key_id": "xx",
-   "aws_secret_access_key": "yy",
-   "region_name": "eu-west-2",
-   "endpoint_url": "None",
-   "single_table_mode": "True",
-   "objectPrefix": "templateservicename"
- }
-}
-EOF
-```
+TODO Setup vault role
+require policy access to:
+memset/deployment/commonsecrets (Not sure if first / required)
 
-Setup project in codefresh
+create secrets
+${PROJECT_NAME}_vault_roleid
+${PROJECT_NAME}_vault_secretid
+
 
 Change clone step in codefresh so it has either github or gitlab.
 

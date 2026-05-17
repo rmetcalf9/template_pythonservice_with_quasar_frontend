@@ -1,0 +1,258 @@
+name: build_test_and_deploy
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build_test_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # === prepare stage ===
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # === build stage ===
+      - name: Read Docker credentials from Vault
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          exportEnv: true
+          secrets: |
+            kv/data/robert_accounts/dockerhub/personal_access_tokens/${PROJECT_NAME}_deployment username | DOCKER_USERNAME ;
+            kv/data/robert_accounts/dockerhub/personal_access_tokens/${PROJECT_NAME}_deployment password | DOCKER_PASSWORD ;
+            kv/data/memset/deployment/ssh SSH_KEY | SSH_KEY ;
+            kv/data/memset/deployment/ssh SPLIT_CHAR | SPLIT_CHAR ;
+            kv/data/memset/deployment/ssh SSH_PORT | SSH_PORT ;
+            kv/data/memset/deployment/ssh SSH_HOST | SSH_HOST ;
+            kv/data/memset/deployment/ssh SSH_USER | SSH_USER
+
+      - name: Unit tests
+        run: |
+          source ./_repo_vars.sh && \
+          echo "Running uint tests for ${PROJECT_NAME}" && \
+          docker run --rm -v "$PWD/services:/opt/services" -w /opt/services \
+            ${RJM_PYTHON_TEST_IMAGE} \
+            sh -c "pip3 install --no-cache-dir -r ./src/requirements.txt && \
+                   pip3 install --no-cache-dir -r ./testContainer/requirements.txt && \
+                   SKIPSQLALCHEMYTESTS=Y python3 -m pytest ./test"
+
+      - name: Build frontend
+        run: |
+          source ./_repo_vars.sh && \
+          docker run --rm -v "$PWD:/opt/work" -w /opt/work \
+            -e OVERRIDE_PUBLIC_PATH="${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/public/web/frontend/" \
+            ${QUASARBUILDIMAGE} \
+            -c "build_quasar_app ./frontend ${QUASARBUILDMODE} ${RJM_VERSION}"
+
+      - name: Build main image
+        run: |
+          source ./_repo_vars.sh && \
+          docker build -t ${DOCKER_USERNAME}/${PROJECT_NAME}:${RJM_VERSION} .
+
+      - name: Build test image
+        run: |
+          source ./_repo_vars.sh && \
+          docker build -t ${DOCKER_USERNAME}/${PROJECT_NAME}test:develop \
+            -f services/testContainer/Dockerfile services/testContainer
+
+      - name: Container level tests
+        run: |
+          source ./_repo_vars.sh && \
+          docker compose -f .github/compose-test.yml up --abort-on-container-exit --exit-code-from ${PROJECT_NAME}test
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      - name: Push images to dockehub
+        run: |
+          source ./_repo_vars.sh && \
+          docker push ${DOCKER_USERNAME}/${PROJECT_NAME}:${RJM_VERSION}
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          # Convert the split-char SSH key back into a real multiline key
+          echo "${SSH_KEY}" | sed "s/${SPLIT_CHAR}/\n/g" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Add host to known_hosts
+          ssh-keyscan -p "${SSH_PORT}" "${SSH_HOST}" >> ~/.ssh/known_hosts
+
+      # Artifacts created now deploy to server
+      - name: Deploy Docker Service to Swarm
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+
+          docker service create --name "${RJM_DOCKER_SERVICE_NAME}" \
+            --network main_net \
+            --secret ${PROJECT_NAME}_vault_roleid \
+            --secret ${PROJECT_NAME}_vault_secretid \
+            -e APIAPP_VAULT_URL=https://vault.metcarob.com/ \
+            -e APIAPP_VAULT_ROLE_IDFILE=/run/secrets/${PROJECT_NAME}_vault_roleid \
+            -e APIAPP_VAULT_SECRET_IDFILE=/run/secrets/${PROJECT_NAME}_vault_secretid \
+            -e APIAPP_JWTSECRETVAULT=memset/deployment/commonsecrets:APIAPP_JWTSECRET \
+            -e APIAPP_DEFAULTHOMEADMINUSERNAME=admin \
+            -e APIAPP_APIURL=https://api.metcarob.com/api \
+            -e APIAPP_APIDOCSURL=https://api.metcarob.com/${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/public/web/apidocs \
+            -e APIAPP_FRONTENDURL=https://api.metcarob.com/${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/public/web/frontend \
+            -e APIAPP_DEFAULTMASTERTENANTJWTCOLLECTIONALLOWEDORIGINFIELD="https://api.metcarob.com,https://localhost,http://localhost" \
+            --constraint 'node.labels.legacy == true' \
+            "${DOCKER_USERNAME}/${PROJECT_NAME}:${RJM_VERSION}"
+
+          EOF
+
+      - name: Configure Kong test container endpoint
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+              docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
+              ${RJM_DOCKERWSCALLER_IMAGE} \
+              ${RJM_DOCKER_KONG_API_URL} \
+              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_PUBLIC http ${RJM_DOCKER_SERVICE_URL} 80 /public/ \
+              https api.metcarob.com /${PROJECT_NAME}/test/v${RJM_MAJOR_VERSION}/public null null null true
+
+          EOF
+
+      - name: Configure Kong test authed container endpoint
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+              docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
+              ${RJM_DOCKERWSCALLER_IMAGE} \
+              ${RJM_DOCKER_KONG_API_URL} \
+              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_AUTHED http ${RJM_DOCKER_SERVICE_URL} 80 /authed/ \
+              https api.metcarob.com /${PROJECT_NAME}/test/v${RJM_MAJOR_VERSION}/authed null null null true
+
+          EOF
+
+      #endpoints are secured the first time they are created. This will add the plugins only if they are not there
+      - name: Add security plugins for test
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+              docker run --rm -i --network main_net --entrypoint kong_add_jwt_and_acl_plugins \
+              ${RJM_DOCKERWSCALLER_IMAGE} \
+              ${RJM_DOCKER_KONG_API_URL} \
+              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_AUTHED \
+              \"${JWT_COOKIE_NAME}\" \
+              \"${AUTHED_ACL_WHITELIST}\" \
+              \"${AUTHED_ACL_BLACKLIST}\" \
+              \"kong_iss\"
+
+          EOF
+
+      - name: Test the newly deployed container using test endpoint
+        run: |
+          source ./_repo_vars.sh && \
+          docker run --rm \
+            -e EXPECTED_CONTAINER_VERSION=${RJM_VERSION} \
+            -e BASEURL_TO_TEST=https://api.metcarob.com/${PROJECT_NAME}/test/v${RJM_MAJOR_VERSION} \
+            -e HTTPORIGIN_TO_TEST=https://api.metcarob.com \
+            -e RUNNINGVIAKONG="TRUE" \
+            -e APIAPP_DEFAULTHOMEADMINUSERNAME=codefresh_test_user \
+            -e APIAPP_DEFAULTHOMEADMINPASSWORD=${SAASCODEFRESHTESTUSERPASSWORD} \
+            ${DOCKER_USERNAME}/${PROJECT_NAME}test:develop \
+            python3 -m pytest /ext_volume
+
+      - name: Configure Kong prod public container endpoint
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+              docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
+              ${RJM_DOCKERWSCALLER_IMAGE} \
+              ${RJM_DOCKER_KONG_API_URL} \
+              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_PUBLIC http ${RJM_KONG_UPSTREAM_NAME} 80 /public/ \
+              https api.metcarob.com /${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/public null null null true
+
+          EOF
+
+      - name: Configure Kong prod authed container endpoint
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+              docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
+              ${RJM_DOCKERWSCALLER_IMAGE} \
+              ${RJM_DOCKER_KONG_API_URL} \
+              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_AUTHED http ${RJM_KONG_UPSTREAM_NAME} 80 /authed/ \
+              https api.metcarob.com /${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/authed null null null true
+
+          EOF
+
+      #endpoints are secured the first time they are created. This will add the plugins only if they are not there
+      - name: Add security plugins
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+              docker run --rm -i --network main_net --entrypoint kong_add_jwt_and_acl_plugins \
+              ${RJM_DOCKERWSCALLER_IMAGE} \
+              ${RJM_DOCKER_KONG_API_URL} \
+              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_AUTHED \
+              \"${JWT_COOKIE_NAME}\" \
+              \"${AUTHED_ACL_WHITELIST}\" \
+              \"${AUTHED_ACL_BLACKLIST}\" \
+              \"kong_iss\"
+
+          EOF
+
+      - name: Configure Kong prod upstream
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+            docker run --rm -i --network main_net --entrypoint kong_add_upstream \
+              ${RJM_DOCKERWSCALLER_IMAGE} \
+              ${RJM_DOCKER_KONG_API_URL} \
+              ${RJM_KONG_UPSTREAM_NAME} \
+              ${RJM_DOCKER_SERVICE_URL}:80 \
+              remove_other_targets
+
+          EOF
+
+      # no longer approve cleanup old version - just go straight ahead and cleanup
+
+      - name: Clean up old versions
+        run: |
+          source ./_repo_vars.sh && \
+          ssh -p "${SSH_PORT}" \
+            -i ~/.ssh/id_rsa \
+            "${SSH_USER}@${SSH_HOST}" \
+            bash -s << EOF
+              docker run --rm -i --network main_net --volume=/var/run:/var/run --entrypoint docker_service_remove_non_live \
+                ${RJM_DOCKERWSCALLER_IMAGE} \
+                ${PROJECT_NAME} \
+                ${RJM_VERSION} \
+                ${DOCKER_USERNAME}/
+
+          EOF

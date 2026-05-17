@@ -6,17 +6,11 @@
 source ./_repo_vars.sh
 
 GITROOT=$(pwd)
-DOCKER_USERNAME=metcarob
-VERSIONNUM=$(cat ./VERSION)
-QUASARBUILDIMAGE="metcarob/docker-build-quasar-app:0.0.30"
 
-#could be spa or pwa
-QUASARBUILDMODE=pwa
-
-docker image inspect ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${VERSIONNUM}_localbuild > /dev/null
+docker image inspect ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${RJM_VERSION}_localbuild > /dev/null
 RES=$?
 if [ ${RES} -eq 0 ]; then
-  docker rmi ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${VERSIONNUM}_localbuild
+  docker rmi ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${RJM_VERSION}_localbuild
   RES2=$?
   if [ ${RES2} -ne 0 ]; then
     echo "Image exists and delete failed"
@@ -24,7 +18,7 @@ if [ ${RES} -eq 0 ]; then
   fi
 fi
 
-docker run --rm --name docker_build_quasar_app --mount type=bind,source=${GITROOT}/frontend,target=/ext_volume ${QUASARBUILDIMAGE} -c "build_quasar_app /ext_volume ${QUASARBUILDMODE} \"local_build_${VERSIONNUM}\""
+docker run --rm --name docker_build_quasar_app --mount type=bind,source=${GITROOT}/frontend,target=/ext_volume ${QUASARBUILDIMAGE} -c "build_quasar_app /ext_volume ${QUASARBUILDMODE} \"local_build_${RJM_VERSION}\""
 RES=$?
 if [ ${RES} -ne 0 ]; then
   exit 1
@@ -36,10 +30,10 @@ if [ ! -d ${GITROOT}/frontend/dist/${QUASARBUILDMODE} ]; then
   exit 1
 fi
 
-echo "Build docker container (VERSIONNUM=${VERSIONNUM})"
+echo "Build docker container (RJM_VERSION=${RJM_VERSION})"
 #This file does no version bumping
 cd ${GITROOT}
-eval docker build . -t ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${VERSIONNUM}_localbuild
+eval docker build . -t ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${RJM_VERSION}_localbuild
 RES=$?
 if [ ${RES} -ne 0 ]; then
   echo ""
