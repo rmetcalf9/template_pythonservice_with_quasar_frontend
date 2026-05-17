@@ -46,7 +46,6 @@ jobs:
         run: |
           source ./_repo_vars.sh && \
           docker run --rm -v "$PWD:/opt/work" -w /opt/work \
-            -e OVERRIDE_PUBLIC_PATH="${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/public/web/frontend/" \
             ${QUASARBUILDIMAGE} \
             -c "build_quasar_app ./frontend ${QUASARBUILDMODE} ${RJM_VERSION}"
 

@@ -105,6 +105,7 @@ start_local_saas_user_management_service \
 RES=$?
 if [ ${RES} -ne 0 ]; then
   echo "Error starting security microservice"
+  read -p "Press enter to continue"
   echo ""
   exit 1
 fi

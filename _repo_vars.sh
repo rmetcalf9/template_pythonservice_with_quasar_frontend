@@ -16,7 +16,7 @@ export RJM_PYTHON_TEST_IMAGE=python:3.10
 export DOCKER_USERNAME=metcarob
 export DOCKER_IMAGENAME=${PROJECT_NAME}
 
-export RJM_USERMANAGEMENT_CONTAINER="metcarob/saas_user_management:0.1.16"
+export RJM_USERMANAGEMENT_CONTAINER="metcarob/saas_user_management:0.1.16_rootver"
 
 export RJM_DOCKERWSCALLER_IMAGE="metcarob/docker-ws-caller:0.7.19"
 export RJM_DOCKER_KONG_API_URL="http://tasks.kong:8001"
