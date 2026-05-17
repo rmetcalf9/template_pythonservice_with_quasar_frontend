@@ -17,6 +17,9 @@ Find and replace service name occurrences (templateservicename -> new name):
  - terraform main
  - local_terraform
  - testContainer
+ - services/_start_local_saas_user_management_service_config.json
+
+In _repo_vars.sh delete the line that overrides the project directory to templateservicename
 
 Find and replace defaulttenant to the tenant name. E.g. for saas_social I made the default social. This is for when the
 frontend connects to usermanagement.

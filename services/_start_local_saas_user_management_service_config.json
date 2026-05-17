@@ -1,13 +1,13 @@
 {"steps": [
     { "type": "echo", "data": { "text": "templateservicename Dev Security Config"}},
     { "type": "createTenant", "data": {
-      "tenantName": "defaulttenant",
+      "tenantName": "templateservicename",
       "description": "Autoconfig tenant for development testing",
       "allowUserCreation": true,
       "JWTCollectionAllowedOriginList": [ "https://api.metcarob.com", "http://localhost:8080", "http://127.0.0.1:8099" ]
     }},
     { "type": "addAuthProvider", "data": {
-      "tenantName": "defaulttenant",
+      "tenantName": "templateservicename",
       "menuText": "Internal Auth",
       "iconLink": "",
       "Type": "internal",
@@ -18,7 +18,7 @@
       "LinkText": "Internal Auth"
     }},
     { "type": "addInternalUserAccount", "data": {
-      "tenantName": "defaulttenant",
+      "tenantName": "templateservicename",
       "userID": "templateservicenameAutoconfigTestUser",
       "Username": "TestUser",
       "Password": "TestUser",
@@ -27,7 +27,7 @@
       }
     }},
     { "type": "addInternalUserAccount", "data": {
-      "tenantName": "defaulttenant",
+      "tenantName": "templateservicename",
       "userID": "templateservicenameAutoconfigAdminUser",
       "Username": "TestAdmin",
       "Password": "TestAdmin",

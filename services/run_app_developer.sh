@@ -2,6 +2,8 @@
 
 echo "templateservicename"
 
+INITAL_DIR=$(pwd)
+
 source ../_repo_vars.sh
 
 SAAS_APIAPP_MASTERPASSWORDFORPASSHASH=wefgFvGFt5433e
@@ -82,13 +84,24 @@ if [ E${APIAPP_VERSION} = 'E' ]; then
 fi
 
 # Start security service (if not already running)
-./_start_local_saas_user_management_service.sh ${SAAS_USERMANAGEMENT_CONTAINER} \
-  ${APIAPP_JWTSECRET} \
-  ${EXTURL} \
-  ${EXTPORT} \
-  ${EXTPORT80FORSECURITY} \
-  ${SAAS_APIAPP_MASTERPASSWORDFORPASSHASH}
+APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN_FOR_USER_MANAGEMENT="http://localhost:8080, http://127.0.0.1:8080, http://localhost:8099, http://127.0.0.1:8099"
+SETUP_JSON_DIR=${INITAL_DIR}
+SETUP_JSON_FILENAME="_start_local_saas_user_management_service_config.json"
+EXPECTED_TENANT="${PROJECT_NAME}"
+EXTERNAL_VOLUME=""
 
+start_local_saas_user_management_service \
+   ${RJM_USERMANAGEMENT_CONTAINER} \
+   ${APIAPP_JWTSECRET} \
+   ${EXTURL} \
+   ${EXTPORT} \
+   ${EXTPORT80FORSECURITY} \
+   ${SAAS_APIAPP_MASTERPASSWORDFORPASSHASH} \
+   "${APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN_FOR_USER_MANAGEMENT}" \
+   ${SETUP_JSON_DIR} \
+   ${SETUP_JSON_FILENAME} \
+   ${EXPECTED_TENANT} \
+   "${EXTERNAL_VOLUME}"
 RES=$?
 if [ ${RES} -ne 0 ]; then
   echo "Error starting security microservice"
