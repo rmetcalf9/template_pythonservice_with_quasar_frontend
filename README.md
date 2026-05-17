@@ -56,14 +56,21 @@ pip install -r ./services/testContainer/requirements.txt
 
 ## Deploy Setup
 
-TODO Setup vault role
+TODO Setup vault DEPLOY role (Kept in github secrets)
+
+TODO Setup vault RUN role (Kepy in docker secrets)
+
 require policy access to:
 memset/deployment/commonsecrets (Not sure if first / required)
 
 create secrets
-${PROJECT_NAME}_vault_roleid
-${PROJECT_NAME}_vault_secretid
+${PROJECT_NAME}_vault_roleid     (for run role)
+${PROJECT_NAME}_vault_secretid    (for run role)
 
+TODO github secrets
+VAULT_ROLE_ID   (for deploy role)
+VAULT_SECRET_ID  (for deploy role)
+VAULT_ADDR
 
 Change clone step in codefresh so it has either github or gitlab.
 
