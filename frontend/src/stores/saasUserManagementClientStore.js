@@ -74,7 +74,7 @@ export function refreshJWTToken (callback, curpath, startAllBackendCallQueuesFn)
         cookieToSave.loginTenantName = rjmStateChangeObj.getFromState('loginService').tenantName
         function isDevMachine () {
           return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname)
-        }        
+        }
         Cookies.set('saasUserManagementClientStoreCredentials', cookieToSave, {
           secure: !isDevMachine(), // otherwise cookie not set on dev machines
           expires: 90 // expire in 90 days
