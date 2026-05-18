@@ -66,7 +66,7 @@ export APIAPP_APIACCESSSECURITY=[]
 export APIAPP_PORT=8098
 ##export APIAPP_OBJECTSTORECONFIG="{\"Type\":\"Memory\"}"
 export APIAPP_OBJECTSTORECONFIG="{\"Type\": \"SimpleFileStore\",\"BaseLocation\": \"./objectstoredata\"}"
-export APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN="http://localhost:8080"
+export APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN="http://localhost:8080,http://127.0.0.1:8080"
 
 export APIAPP_VERSION=
 if [ -f ${APP_DIR}/VERSION ]; then
@@ -87,7 +87,7 @@ fi
 APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN_FOR_USER_MANAGEMENT="http://localhost:8080, http://127.0.0.1:8080, http://localhost:8099, http://127.0.0.1:8099"
 SETUP_JSON_DIR=${INITAL_DIR}
 SETUP_JSON_FILENAME="_start_local_saas_user_management_service_config.json"
-EXPECTED_TENANT="${PROJECT_NAME}"
+EXPECTED_TENANT="defaulttenant"
 EXTERNAL_VOLUME=""
 
 start_local_saas_user_management_service \

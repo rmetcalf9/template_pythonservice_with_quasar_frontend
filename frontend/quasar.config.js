@@ -50,7 +50,10 @@ module.exports = configure(function (ctx) {
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
-      // transpile: false,
+      transpile: true,
+      target: {
+        browser: ['es2017']
+      },
       // publicPath: '/',
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
@@ -73,6 +76,11 @@ module.exports = configure(function (ctx) {
       chainWebpack (chain) {
         chain.plugin('eslint-webpack-plugin')
           .use(ESLintPlugin, [{ extensions: ['js', 'vue'] }])
+
+        // Target ES2017 browsers
+        chain.merge({
+          target: ['web', 'es2017']
+        })
       }
 
     },
