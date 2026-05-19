@@ -1,50 +1,76 @@
 FROM python:3.11-bookworm
 
-#docker file for saas_social microservice
-# Using python buster as base image to make better python images
-# I have built this as a single container microservice to ease versioning
-
-#https://pythonspeed.com/articles/alpine-docker-python/
-#https://github.com/tiangolo/uwsgi-nginx-docker/blob/master/docker-images/python3.8.dockerfile
+# -----------------------------
+# saas_social microservice
+# -----------------------------
 
 MAINTAINER Robert Metcalf
 
-ENV APP_DIR /app
-##web dirs arealso configured in nginx conf
-ENV APIAPP_FRONTEND /frontend
-ENV APIAPP_FRONTEND_FRONTEND /frontend
+# -----------------------------
+# Environment
+# -----------------------------
+ENV APP_DIR=/app
+ENV APIAPP_FRONTEND=/frontend
+ENV APIAPP_FRONTEND_FRONTEND=/frontend
 
+ENV APIAPP_APIURL=http://localhost:80/api
+ENV APIAPP_APIDOCSURL=http://localhost:80/apidocs
+ENV APIAPP_FRONTENDURL=http://localhost:80/frontend
+ENV APIAPP_APIACCESSSECURITY='[]'
 
-ENV APIAPP_APIURL http://localhost:80/api
-ENV APIAPP_APIDOCSURL http://localhost:80/apidocs
-ENV APIAPP_FRONTENDURL http://localhost:80/frontend
-ENV APIAPP_APIACCESSSECURITY '[]'
+ENV APIAPP_DEFAULTMASTERTENANTJWTCOLLECTIONALLOWEDORIGINFIELD="http://localhost"
 
-ENV APIAPP_DEFAULTMASTERTENANTJWTCOLLECTIONALLOWEDORIGINFIELD "http://localhost"
+ENV APIAPP_PORT=80
+ENV APIAPP_MODE=DOCKER
 
-#Port for python app should always be 80 as this is is hardcoded in nginx config
-ENV APIAPP_PORT 80
-
-# APIAPP_MODE is now defined here instead of run_app_docker.sh
-#  this is to enable dev mode containers (and avoid dev cors errors)
-ENV APIAPP_MODE DOCKER
-
-# APIAPP_VERSION is not definable here as it is read from the VERSION file inside the image
+# Use venv for all python execution
+ENV VENV_PATH=/venv
+ENV PATH="/venv/bin:$PATH"
 
 EXPOSE 80
 
+# -----------------------------
+# Copy nginx installer
+# -----------------------------
 COPY install-nginx-debian.sh /
 
-RUN apt-get install ca-certificates && \
-    bash /install-nginx-debian.sh && \
-    mkdir ${APP_DIR} && \
-    mkdir ${APIAPP_FRONTEND_FRONTEND} && \
-    mkdir /var/log/uwsgi && \
-    pip3 install uwsgi && \
-    wget --ca-directory=/etc/ssl/certs https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /rds-combined-ca-bundle.pem
+# -----------------------------
+# System deps + nginx + venv setup
+# -----------------------------
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        wget \
+        python3-venv \
+        build-essential \
+        libffi-dev \
+        libssl-dev \
+        nginx \
+    ; \
+    rm -rf /var/lib/apt/lists/*; \
+    \
+    bash /install-nginx-debian.sh; \
+    \
+    mkdir -p ${APP_DIR} \
+             ${APIAPP_FRONTEND_FRONTEND} \
+             /var/log/uwsgi; \
+    \
+    python3 -m venv ${VENV_PATH}; \
+    ${VENV_PATH}/bin/pip install --upgrade pip setuptools wheel; \
+    ${VENV_PATH}/bin/pip install uwsgi; \
+    \
+    wget --ca-directory=/etc/ssl/certs \
+        https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem \
+        -O /rds-combined-ca-bundle.pem
 
+# -----------------------------
+# App code
+# -----------------------------
 COPY ./services/src ${APP_DIR}
-RUN pip3 install -r ${APP_DIR}/requirements.txt
+
+RUN /venv/bin/pip install --no-cache-dir -r ${APP_DIR}/requirements.txt
 
 COPY ./frontend/dist/pwa ${APIAPP_FRONTEND_FRONTEND}
 COPY ./VERSION /VERSION
@@ -53,15 +79,12 @@ COPY ./nginx_default.conf /etc/nginx/conf.d/default.conf
 COPY ./uwsgi.ini /uwsgi.ini
 COPY ./healthcheck.sh /healthcheck.sh
 
+# -----------------------------
+# Runtime config
+# -----------------------------
 STOPSIGNAL SIGTERM
-
 
 CMD ["/run_app_docker.sh"]
 
-# Regular checks. Docker won't send traffic to container until it is healthy
-#  and when it first starts it won't check the health until the interval so I can't have
-#  a higher value without increasing the startup time
 HEALTHCHECK --interval=30s --timeout=3s \
   CMD /healthcheck.sh
-
-##to run see run_localbuild_container.sh
