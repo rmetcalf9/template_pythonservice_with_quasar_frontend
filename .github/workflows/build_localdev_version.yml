@@ -68,7 +68,7 @@ jobs:
       - name: Container level tests
         run: |
           source ./_repo_vars.sh && \
-          docker compose -f .github/compose-test.yml up --abort-on-container-exit --exit-code-from ${PROJECT_NAME}test
+          docker compose -f .github/compose-test.yml up --abort-on-container-exit --exit-code-from main_apptest
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

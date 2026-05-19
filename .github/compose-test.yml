@@ -1,6 +1,6 @@
 version: "2"
 services:
-  saas_user_management_system:
+  main_app:
     image: ${DOCKER_USERNAME}/${PROJECT_NAME}:${RJM_VERSION}
     environment:
       APIAPP_APIURL: http://${PROJECT_NAME}:80/api
@@ -11,10 +11,12 @@ services:
       APIAPP_DEFAULTHOMEADMINPASSWORD: admin
       APIAPP_JWTSECRET: someDummy3245SecretForTesting
 
-  saas_user_management_systemtest:
+  main_apptest:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}test:develop
     command: /ext_volume/run_tests_with_wait.sh
     environment:
       EXPECTED_CONTAINER_VERSION: ${RJM_VERSION}
+      TESTPARAM_ENDPOINTURL: http://main_app:8095
+      TESTPARAM_THROUGHKONG: FALSE
       APIAPP_DEFAULTHOMEADMINUSERNAME: admin
       APIAPP_DEFAULTHOMEADMINPASSWORD: admin
