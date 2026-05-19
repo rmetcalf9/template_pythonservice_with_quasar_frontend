@@ -13,7 +13,7 @@ services:
 
   main_apptest:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}test:develop
-    command: /ext_volume/run_tests_with_wait.sh
+    command: /run_tests_with_wait.sh
     environment:
       EXPECTED_CONTAINER_VERSION: ${RJM_VERSION}
       TESTPARAM_ENDPOINTURL: http://main_app:8095
