@@ -1,6 +1,6 @@
-FROM python:3.8-bookworm
+FROM python:3.11-bookworm
 
-#docker file for templateservicename microservice
+#docker file for saas_social microservice
 # Using python buster as base image to make better python images
 # I have built this as a single container microservice to ease versioning
 
@@ -33,29 +33,15 @@ ENV APIAPP_MODE DOCKER
 
 EXPOSE 80
 
-RUN apt-get update && \
-    apt-get install -y nginx && \
-    rm -rf /var/lib/apt/lists/*
+COPY install-nginx-debian.sh /
 
-RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        ca-certificates \
-        curl \
-        gnupg \
-        wget; \
-    mkdir -p ${APP_DIR} \
-             ${APIAPP_FRONTEND_FRONTEND} \
-             /var/log/uwsgi; \
-    pip3 install --no-cache-dir uwsgi; \
-    wget --ca-directory=/etc/ssl/certs \
-        https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem \
-        -O /rds-combined-ca-bundle.pem; \
-    rm -rf /var/lib/apt/lists/*
-
-# Removed do I still need?
-# lmxml build process always runs out of memory
-#RUN pip3 install lxml==4.5.2
+RUN apt-get install ca-certificates && \
+    bash /install-nginx-debian.sh && \
+    mkdir ${APP_DIR} && \
+    mkdir ${APIAPP_FRONTEND_FRONTEND} && \
+    mkdir /var/log/uwsgi && \
+    pip3 install uwsgi && \
+    wget --ca-directory=/etc/ssl/certs https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /rds-combined-ca-bundle.pem
 
 COPY ./services/src ${APP_DIR}
 RUN pip3 install -r ${APP_DIR}/requirements.txt
