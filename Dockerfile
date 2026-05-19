@@ -1,4 +1,4 @@
-FROM python:3.8-buster
+FROM python:3.8-bookworm
 
 #docker file for templateservicename microservice
 # Using python buster as base image to make better python images
