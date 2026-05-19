@@ -67,6 +67,8 @@ require policy access to:
 memset/deployment/commonsecrets (Not sure if first / required)
 
 create secrets
+Use the tool: memsetappvaultsetup
+
 ${PROJECT_NAME}_vault_roleid     (for run role)
 ${PROJECT_NAME}_vault_secretid    (for run role)
 

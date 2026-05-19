@@ -4,7 +4,14 @@ echo "templateservicename"
 
 INITAL_DIR=$(pwd)
 
-source ../_repo_vars.sh
+cd ..
+if [[ ! -f ./_repo_vars.sh ]]; then
+  echo "_repo_vars.sh dosen't exist - are you in correct directory?"
+  cd ${INITAL_DIR}
+  exit 1
+fi
+source ./_repo_vars.sh
+cd ${INITAL_DIR}
 
 SAAS_APIAPP_MASTERPASSWORDFORPASSHASH=wefgFvGFt5433e
 
@@ -37,19 +44,42 @@ if [ ${RES} -ne 0 ]; then
   echo "Using command ${PYTHON_CMD}"
   echo "you can set enviroment variable EXTPYTHONCMD to make this script use a different python command"
   echo ""
+  read -p "Press enter to continue"
   exit 1
 fi
 
 if [ E${EXTURL} = "E" ]; then
   echo "EXTURL not set"
+  read -p "Press enter to continue"
   exit 1
 fi
 if [ E${EXTPORT} = "E" ]; then
   echo "EXTPORT not set"
+  read -p "Press enter to continue"
   exit 1
 fi
 if [ E${EXTPORT80} = "E" ]; then
   echo "EXTPORT80 not set"
+  read -p "Press enter to continue"
+  exit 1
+fi
+
+VAULT_DEV_APP_ROLE_LOC="memset/approles/${PROJECT_NAME}_dev"
+APIAPP_VAULT_ROLE_ID=$(qvault kv get -mount=kv -field=role_id ${VAULT_DEV_APP_ROLE_LOC})
+RES=$?
+if [ ${RES} -ne 0 ]; then
+  echo "ERROR reading role_id from vault ${VAULT_DEV_APP_ROLE_LOC}"
+  echo " maybe you need to do vault login"
+  echo " if it doesn't exist it is created by memsetappvaultsetup"
+  read -p "Press enter to continue"
+  exit 1
+fi
+APIAPP_VAULT_SECRET_ID=$(qvault kv get -mount=kv -field=secret_id ${VAULT_DEV_APP_ROLE_LOC})
+RES=$?
+if [ ${RES} -ne 0 ]; then
+  echo "ERROR reading secret_id from vault ${VAULT_DEV_APP_ROLE_LOC}"
+  echo " it doesn't exist it is created by memsetappvaultsetup"
+  read -p "Press enter to continue"
   exit 1
 fi
 
@@ -67,6 +97,10 @@ export APIAPP_PORT=8098
 ##export APIAPP_OBJECTSTORECONFIG="{\"Type\":\"Memory\"}"
 export APIAPP_OBJECTSTORECONFIG="{\"Type\": \"SimpleFileStore\",\"BaseLocation\": \"./objectstoredata\"}"
 export APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN="http://localhost:8080,http://127.0.0.1:8080"
+export APIAPP_VAULT_URL="https://vault.metcarob.com/"
+export APIAPP_VAULT_ROLE_ID=${APIAPP_VAULT_ROLE_ID}
+export APIAPP_VAULT_SECRET_ID=${APIAPP_VAULT_SECRET_ID}
+
 
 export APIAPP_VERSION=
 if [ -f ${APP_DIR}/VERSION ]; then
