@@ -10,7 +10,6 @@ I have also extended it for with my standard Terraform setup.
 
 Find and replace service name occurrences (templateservicename -> new name):
 
- - codefresh.yml TODDO REMOVE
  - Dockerfile
  - run localbuild
  - frontend/saasClientAPI
@@ -23,6 +22,7 @@ In _repo_vars.sh delete the line that overrides the project directory to templat
 
 Find and replace defaulttenant to the tenant name. E.g. for saas_social I made the default social. This is for when the
 frontend connects to usermanagement.
+Create the tenenat with this name in usermanagement.
 
 In _repo_vars update the versions of build containers I use:
 
@@ -83,6 +83,8 @@ If the deployment works we should be good!
 
  - https://api.metcarob.com/templateservicename/v0/public/web/frontend/#/ works and loads serverinfo
  - curl https://api.metcarob.com/templateservicename/v0/public/api/info/serverinfo works
+
+Log in to usermanagement - this should work
 
 ## Finally
 
