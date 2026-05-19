@@ -4,9 +4,9 @@
 # Ref: https://github.com/nginxinc/docker-nginx/blob/594ce7a8bc26c85af88495ac94d5cd0096b306f7/mainline/buster/Dockerfile
 
 # Standard set up Nginx
-export NGINX_VERSION=1.17.10
+export NGINX_VERSION=1.26.2
 export NJS_VERSION=0.3.9
-export PKG_RELEASE=1~buster
+export PKG_RELEASE=1~bookworm
 
 set -x \
     && apt-get update \
@@ -35,11 +35,11 @@ set -x \
     " \
     && case "$dpkgArch" in \
         amd64|i386) \
-            echo "deb https://nginx.org/packages/mainline/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list \
+            echo "deb https://nginx.org/packages/mainline/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list \
             && apt-get update \
             ;; \
         *) \
-            echo "deb-src https://nginx.org/packages/mainline/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list \
+            echo "deb-src https://nginx.org/packages/mainline/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list \
             \
             && tempDir="$(mktemp -d)" \
             && chmod 777 "$tempDir" \
