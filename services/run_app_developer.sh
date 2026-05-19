@@ -87,7 +87,7 @@ fi
 APIAPP_COMMON_ACCESSCONTROLALLOWORIGIN_FOR_USER_MANAGEMENT="http://localhost:8080, http://127.0.0.1:8080, http://localhost:8099, http://127.0.0.1:8099"
 SETUP_JSON_DIR=${INITAL_DIR}
 SETUP_JSON_FILENAME="_start_local_saas_user_management_service_config.json"
-EXPECTED_TENANT="defaulttenant"
+EXPECTED_TENANT="ensurerightum_${PROJECT_NAME}"
 EXTERNAL_VOLUME=""
 
 start_local_saas_user_management_service \
