@@ -15,7 +15,7 @@ services:
     image: ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}test:develop
     command: /run_tests_with_wait.sh
     environment:
-      EXPECTED_CONTAINER_VERSION: ${RJM_VERSION}
+      TESTPARAM_EXPECTED_CONTAINER_VERSION: ${RJM_VERSION}
       TESTPARAM_ENDPOINTURL: http://main_app:8095
       TESTPARAM_THROUGHKONG: FALSE
       APIAPP_DEFAULTHOMEADMINUSERNAME: admin
