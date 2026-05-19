@@ -33,15 +33,25 @@ ENV APIAPP_MODE DOCKER
 
 EXPOSE 80
 
-COPY install-nginx-debian.sh /
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install ca-certificates && \
-    bash /install-nginx-debian.sh && \
-    mkdir ${APP_DIR} && \
-    mkdir ${APIAPP_FRONTEND_FRONTEND} && \
-    mkdir /var/log/uwsgi && \
-    pip3 install uwsgi && \
-    wget --ca-directory=/etc/ssl/certs https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /rds-combined-ca-bundle.pem
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        gnupg \
+        wget; \
+    mkdir -p ${APP_DIR} \
+             ${APIAPP_FRONTEND_FRONTEND} \
+             /var/log/uwsgi; \
+    pip3 install --no-cache-dir uwsgi; \
+    wget --ca-directory=/etc/ssl/certs \
+        https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem \
+        -O /rds-combined-ca-bundle.pem; \
+    rm -rf /var/lib/apt/lists/*
 
 # Removed do I still need?
 # lmxml build process always runs out of memory
