@@ -29,8 +29,8 @@ jobs:
           secretId: ${{ secrets.VAULT_SECRET_ID }}
           exportEnv: true
           secrets: |
-            kv/data/robert_accounts/dockerhub/personal_access_tokens/${env.PROJECT_NAME}_deployment username | DOCKER_USERNAME ;
-            kv/data/robert_accounts/dockerhub/personal_access_tokens/${env.PROJECT_NAME}_deployment password | DOCKER_PASSWORD ;
+            kv/data/robert_accounts/dockerhub/personal_access_tokens/${{ env.PROJECT_NAME }}_deployment username | DOCKER_USERNAME ;
+            kv/data/robert_accounts/dockerhub/personal_access_tokens/${{ env.PROJECT_NAME }}_deployment password | DOCKER_PASSWORD ;
             kv/data/memset/deployment/ssh SSH_KEY | SSH_KEY ;
             kv/data/memset/deployment/ssh SPLIT_CHAR | SPLIT_CHAR ;
             kv/data/memset/deployment/ssh SSH_PORT | SSH_PORT ;
