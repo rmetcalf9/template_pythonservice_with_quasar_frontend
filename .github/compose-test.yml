@@ -16,7 +16,7 @@ services:
     command: /run_tests_with_wait.sh
     environment:
       TESTPARAM_EXPECTED_CONTAINER_VERSION: ${RJM_VERSION}
-      TESTPARAM_ENDPOINTURL: http://main_app:8095
+      TESTPARAM_ENDPOINTURL: http://main_app:80
       TESTPARAM_THROUGHKONG: FALSE
       APIAPP_DEFAULTHOMEADMINUSERNAME: admin
       APIAPP_DEFAULTHOMEADMINPASSWORD: admin
