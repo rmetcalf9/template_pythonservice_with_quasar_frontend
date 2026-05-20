@@ -177,6 +177,7 @@ jobs:
             -e APIAPP_DEFAULTHOMEADMINUSERNAME=codefresh_test_user \
             -e APIAPP_DEFAULTHOMEADMINPASSWORD=${SAASCODEFRESHTESTUSERPASSWORD} \
             -e TESTPARAM_ENDPOINTURL=https://api.metcarob.com/${PROJECT_NAME}/test/v${RJM_MAJOR_VERSION} \
+            -e TESTPARAM_THROUGHKONG="TRUE" \
             ${DOCKER_USERNAME}/${PROJECT_NAME}test:develop \
             python3 -m pytest /test
 
