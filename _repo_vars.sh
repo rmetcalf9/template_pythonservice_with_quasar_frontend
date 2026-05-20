@@ -20,6 +20,7 @@ export RJM_USERMANAGEMENT_CONTAINER="metcarob/saas_user_management:0.1.19_nonkon
 
 export RJM_DOCKERWSCALLER_IMAGE="metcarob/docker-ws-caller:0.7.19"
 export RJM_DOCKER_KONG_API_URL="http://tasks.kong:8001"
+export RJM_DOCKER_SERVICE_NAME=${PROJECT_NAME}_${RJM_VERSION_UNDERSCORE}
 export RJM_DOCKER_SERVICE_URL=tasks.${RJM_DOCKER_SERVICE_NAME}
 
 export QUASARBUILDIMAGE="metcarob/docker-build-quasar-app:0.0.33"
