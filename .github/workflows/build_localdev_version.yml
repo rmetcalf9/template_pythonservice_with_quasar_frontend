@@ -177,7 +177,7 @@ jobs:
             -e APIAPP_DEFAULTHOMEADMINUSERNAME=codefresh_test_user \
             -e APIAPP_DEFAULTHOMEADMINPASSWORD=${SAASCODEFRESHTESTUSERPASSWORD} \
             ${DOCKER_USERNAME}/${PROJECT_NAME}test:develop \
-            python3 -m pytest /ext_volume
+            python3 -m pytest /test
 
       - name: Configure Kong prod public container endpoint
         run: |
