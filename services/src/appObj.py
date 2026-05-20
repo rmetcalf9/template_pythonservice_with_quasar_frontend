@@ -34,7 +34,7 @@ class appObjClass(parAppObj):
   def init(self, env, serverStartTime, testingMode = False):
     ##self.setupLogging() Comment in when debugging
 
-    super(appObjClass, self).init(env, serverStartTime, testingMode, serverinfoapiprefix='public/info', True)
+    super(appObjClass, self).init(env, serverStartTime, testingMode, serverinfoapiprefix='public/info', useVault=True)
     ##print("appOBj init")
 
     objectStoreConfigJSON = getReadFromEnviromentFn(
