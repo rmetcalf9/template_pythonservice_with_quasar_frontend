@@ -3,6 +3,9 @@ services:
   main_app:
     image: ${DOCKER_USERNAME}/${PROJECT_NAME}:${RJM_VERSION}
     environment:
+      APIAPP_VAULT_URL: "MOCK",
+      APIAPP_VAULT_ROLE_ID: "MOCK",
+      APIAPP_VAULT_SECRET_ID: "MOCK",
       APIAPP_APIURL: http://${PROJECT_NAME}:80/api
       APIAPP_APIDOCSURL: http://${PROJECT_NAME}:80/apidocs
       APIAPP_FRONTENDURL: http://${PROJECT_NAME}:80/frontend
