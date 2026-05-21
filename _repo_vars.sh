@@ -29,6 +29,7 @@ export JWT_COOKIE_NAME="jwt-auth-token"
 export AUTHED_ACL_WHITELIST="${PROJECT_NAME}"
 export AUTHED_ACL_BLACKLIST=""
 
+export MEMSET_CLOUD_ROOT=/memset_cloud
 
 export QUASARBUILDIMAGE="metcarob/docker-build-quasar-app:0.0.33"
 #could be spa or pwa

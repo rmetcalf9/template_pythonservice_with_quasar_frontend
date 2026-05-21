@@ -117,53 +117,66 @@ jobs:
 
           EOF
 
-      - name: Configure Kong test container endpoint
-        run: |
-          source ./_repo_vars.sh && \
-          ssh -p "${SSH_PORT}" \
-            -i ~/.ssh/id_rsa \
-            "${SSH_USER}@${SSH_HOST}" \
-            bash -s << EOF
-              docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
-              ${RJM_DOCKERWSCALLER_IMAGE} \
-              ${RJM_DOCKER_KONG_API_URL} \
-              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_PUBLIC http ${RJM_DOCKER_SERVICE_URL} 80 /public/ \
-              https api.metcarob.com /${PROJECT_NAME}/test/v${RJM_MAJOR_VERSION}/public null null null true
-
-          EOF
-
-      - name: Configure Kong test authed container endpoint
-        run: |
-          source ./_repo_vars.sh && \
-          ssh -p "${SSH_PORT}" \
-            -i ~/.ssh/id_rsa \
-            "${SSH_USER}@${SSH_HOST}" \
-            bash -s << EOF
-              docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
-              ${RJM_DOCKERWSCALLER_IMAGE} \
-              ${RJM_DOCKER_KONG_API_URL} \
-              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_AUTHED http ${RJM_DOCKER_SERVICE_URL} 80 /authed/ \
-              https api.metcarob.com /${PROJECT_NAME}/test/v${RJM_MAJOR_VERSION}/authed null null null true
-
-          EOF
+      # - name: Configure Kong test container endpoint
+      #   run: |
+      #     source ./_repo_vars.sh && \
+      #     ssh -p "${SSH_PORT}" \
+      #       -i ~/.ssh/id_rsa \
+      #       "${SSH_USER}@${SSH_HOST}" \
+      #       bash -s << EOF
+      #         docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
+      #         ${RJM_DOCKERWSCALLER_IMAGE} \
+      #         ${RJM_DOCKER_KONG_API_URL} \
+      #         ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_PUBLIC http ${RJM_DOCKER_SERVICE_URL} 80 /public/ \
+      #         https api.metcarob.com /${PROJECT_NAME}/test/v${RJM_MAJOR_VERSION}/public null null null true
+      #
+      #     EOF
+      #
+      # - name: Configure Kong test authed container endpoint
+      #   run: |
+      #     source ./_repo_vars.sh && \
+      #     ssh -p "${SSH_PORT}" \
+      #       -i ~/.ssh/id_rsa \
+      #       "${SSH_USER}@${SSH_HOST}" \
+      #       bash -s << EOF
+      #         docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
+      #         ${RJM_DOCKERWSCALLER_IMAGE} \
+      #         ${RJM_DOCKER_KONG_API_URL} \
+      #         ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_AUTHED http ${RJM_DOCKER_SERVICE_URL} 80 /authed/ \
+      #         https api.metcarob.com /${PROJECT_NAME}/test/v${RJM_MAJOR_VERSION}/authed null null null true
+      #
+      #     EOF
+      #
+      # #endpoints are secured the first time they are created. This will add the plugins only if they are not there
+      # - name: Add security plugins for test
+      #   run: |
+      #     source ./_repo_vars.sh && \
+      #     ssh -p "${SSH_PORT}" \
+      #       -i ~/.ssh/id_rsa \
+      #       "${SSH_USER}@${SSH_HOST}" \
+      #       bash -s << EOF
+      #         docker run --rm -i --network main_net --entrypoint kong_add_jwt_and_acl_plugins \
+      #         ${RJM_DOCKERWSCALLER_IMAGE} \
+      #         ${RJM_DOCKER_KONG_API_URL} \
+      #         ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_AUTHED \
+      #         \"${JWT_COOKIE_NAME}\" \
+      #         \"${AUTHED_ACL_WHITELIST}\" \
+      #         \"${AUTHED_ACL_BLACKLIST}\" \
+      #         \"kong_iss\"
+      #
+      #     EOF
 
       #endpoints are secured the first time they are created. This will add the plugins only if they are not there
-      - name: Add security plugins for test
+      - name: Configure kong for new service
         run: |
           source ./_repo_vars.sh && \
           ssh -p "${SSH_PORT}" \
             -i ~/.ssh/id_rsa \
             "${SSH_USER}@${SSH_HOST}" \
             bash -s << EOF
-              docker run --rm -i --network main_net --entrypoint kong_add_jwt_and_acl_plugins \
-              ${RJM_DOCKERWSCALLER_IMAGE} \
-              ${RJM_DOCKER_KONG_API_URL} \
-              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_TEST_AUTHED \
-              \"${JWT_COOKIE_NAME}\" \
-              \"${AUTHED_ACL_WHITELIST}\" \
-              \"${AUTHED_ACL_BLACKLIST}\" \
-              \"kong_iss\"
-
+              transferDirectory ${SSH_HOST} ./terraform/ ${MEMSET_CLOUD_ROOT}/data_to_backup/terraform/executions/${PROJECT_NAME}
+              ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rsa -o StrictHostKeyChecking=no ${SSH_HOST} ${MEMSET_CLOUD_ROOT}/scripts/update_terraform_deployment.sh  setup_test ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME} ${RJM_VERSION}
+              ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rsa -o StrictHostKeyChecking=no ${SSH_HOST} ${MEMSET_CLOUD_ROOT}/scripts/execute_terraform.sh ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME}
           EOF
 
       - name: Test the newly deployed container using test endpoint
@@ -179,70 +192,97 @@ jobs:
             ${DOCKER_USERNAME}/${PROJECT_NAME}test:develop \
             python3 -m pytest /test
 
-      - name: Configure Kong prod public container endpoint
+      # - name: Configure Kong prod public container endpoint
+      #   run: |
+      #     source ./_repo_vars.sh && \
+      #     ssh -p "${SSH_PORT}" \
+      #       -i ~/.ssh/id_rsa \
+      #       "${SSH_USER}@${SSH_HOST}" \
+      #       bash -s << EOF
+      #         docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
+      #         ${RJM_DOCKERWSCALLER_IMAGE} \
+      #         ${RJM_DOCKER_KONG_API_URL} \
+      #         ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_PUBLIC http ${RJM_KONG_UPSTREAM_NAME} 80 /public/ \
+      #         https api.metcarob.com /${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/public null null null true
+      #
+      #     EOF
+      #
+      # - name: Configure Kong prod authed container endpoint
+      #   run: |
+      #     source ./_repo_vars.sh && \
+      #     ssh -p "${SSH_PORT}" \
+      #       -i ~/.ssh/id_rsa \
+      #       "${SSH_USER}@${SSH_HOST}" \
+      #       bash -s << EOF
+      #         docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
+      #         ${RJM_DOCKERWSCALLER_IMAGE} \
+      #         ${RJM_DOCKER_KONG_API_URL} \
+      #         ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_AUTHED http ${RJM_KONG_UPSTREAM_NAME} 80 /authed/ \
+      #         https api.metcarob.com /${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/authed null null null true
+      #
+      #     EOF
+      #
+      # #endpoints are secured the first time they are created. This will add the plugins only if they are not there
+      # - name: Add security plugins
+      #   run: |
+      #     source ./_repo_vars.sh && \
+      #     ssh -p "${SSH_PORT}" \
+      #       -i ~/.ssh/id_rsa \
+      #       "${SSH_USER}@${SSH_HOST}" \
+      #       bash -s << EOF
+      #         docker run --rm -i --network main_net --entrypoint kong_add_jwt_and_acl_plugins \
+      #         ${RJM_DOCKERWSCALLER_IMAGE} \
+      #         ${RJM_DOCKER_KONG_API_URL} \
+      #         ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_AUTHED \
+      #         \"${JWT_COOKIE_NAME}\" \
+      #         \"${AUTHED_ACL_WHITELIST}\" \
+      #         \"${AUTHED_ACL_BLACKLIST}\" \
+      #         \"kong_iss\"
+      #
+      #     EOF
+      #
+      # - name: Configure Kong prod upstream
+      #   run: |
+      #     source ./_repo_vars.sh && \
+      #     ssh -p "${SSH_PORT}" \
+      #       -i ~/.ssh/id_rsa \
+      #       "${SSH_USER}@${SSH_HOST}" \
+      #       bash -s << EOF
+      #       docker run --rm -i --network main_net --entrypoint kong_add_upstream \
+      #         ${RJM_DOCKERWSCALLER_IMAGE} \
+      #         ${RJM_DOCKER_KONG_API_URL} \
+      #         ${RJM_KONG_UPSTREAM_NAME} \
+      #         ${RJM_DOCKER_SERVICE_URL}:80 \
+      #         remove_other_targets
+      #
+      #     EOF
+
+      - name: Configure kong upstream for prod service
         run: |
           source ./_repo_vars.sh && \
           ssh -p "${SSH_PORT}" \
             -i ~/.ssh/id_rsa \
             "${SSH_USER}@${SSH_HOST}" \
             bash -s << EOF
-              docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
-              ${RJM_DOCKERWSCALLER_IMAGE} \
-              ${RJM_DOCKER_KONG_API_URL} \
-              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_PUBLIC http ${RJM_KONG_UPSTREAM_NAME} 80 /public/ \
-              https api.metcarob.com /${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/public null null null true
-
+              transferDirectory ${SSH_HOST} ./terraform/ ${MEMSET_CLOUD_ROOT}/data_to_backup/terraform/executions/${PROJECT_NAME}
+              ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rsa -o StrictHostKeyChecking=no ${SSH_HOST} ${MEMSET_CLOUD_ROOT}/scripts/update_terraform_deployment.sh  setup_test ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME} ${RJM_VERSION}
+              ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rsa -o StrictHostKeyChecking=no ${SSH_HOST} ${MEMSET_CLOUD_ROOT}/scripts/execute_terraform.sh ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME}
           EOF
 
-      - name: Configure Kong prod authed container endpoint
-        run: |
-          source ./_repo_vars.sh && \
-          ssh -p "${SSH_PORT}" \
-            -i ~/.ssh/id_rsa \
-            "${SSH_USER}@${SSH_HOST}" \
-            bash -s << EOF
-              docker run --rm -i --network main_net --entrypoint kong_install_service_and_route \
-              ${RJM_DOCKERWSCALLER_IMAGE} \
-              ${RJM_DOCKER_KONG_API_URL} \
-              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_AUTHED http ${RJM_KONG_UPSTREAM_NAME} 80 /authed/ \
-              https api.metcarob.com /${PROJECT_NAME}/v${RJM_MAJOR_VERSION}/authed null null null true
+# configure-kong-upstream-for-prod-service:
+#   stage: reconfigure-prod-endpoint
+#   <<: *release_rule
+#   needs:
+#     - run-tests-agianst-server-test-endpoint
+#   image:
+#     name: ${RJM_DOCKERWSCALLER_IMAGE}
+#     entrypoint: ["/bin/sh", "-c"]
+#   script:
+#     - source ./_repo_vars.sh
+#     - transferDirectory ${RDOCKER_HOST} ./terraform/ ${MEMSET_CLOUD_ROOT}/data_to_backup/terraform/executions/${PROJECT_NAME}
+#     - ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rdocker -o StrictHostKeyChecking=no ${RDOCKER_HOST} ${MEMSET_CLOUD_ROOT}/scripts/update_terraform_deployment.sh deploy ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME} ${RJM_VERSION}
+#     - ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rdocker -o StrictHostKeyChecking=no ${RDOCKER_HOST} ${MEMSET_CLOUD_ROOT}/scripts/execute_terraform.sh ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME}
 
-          EOF
-
-      #endpoints are secured the first time they are created. This will add the plugins only if they are not there
-      - name: Add security plugins
-        run: |
-          source ./_repo_vars.sh && \
-          ssh -p "${SSH_PORT}" \
-            -i ~/.ssh/id_rsa \
-            "${SSH_USER}@${SSH_HOST}" \
-            bash -s << EOF
-              docker run --rm -i --network main_net --entrypoint kong_add_jwt_and_acl_plugins \
-              ${RJM_DOCKERWSCALLER_IMAGE} \
-              ${RJM_DOCKER_KONG_API_URL} \
-              ${PROJECT_NAME}_v${RJM_MAJOR_VERSION}_AUTHED \
-              \"${JWT_COOKIE_NAME}\" \
-              \"${AUTHED_ACL_WHITELIST}\" \
-              \"${AUTHED_ACL_BLACKLIST}\" \
-              \"kong_iss\"
-
-          EOF
-
-      - name: Configure Kong prod upstream
-        run: |
-          source ./_repo_vars.sh && \
-          ssh -p "${SSH_PORT}" \
-            -i ~/.ssh/id_rsa \
-            "${SSH_USER}@${SSH_HOST}" \
-            bash -s << EOF
-            docker run --rm -i --network main_net --entrypoint kong_add_upstream \
-              ${RJM_DOCKERWSCALLER_IMAGE} \
-              ${RJM_DOCKER_KONG_API_URL} \
-              ${RJM_KONG_UPSTREAM_NAME} \
-              ${RJM_DOCKER_SERVICE_URL}:80 \
-              remove_other_targets
-
-          EOF
 
       # no longer approve cleanup old version - just go straight ahead and cleanup
 
