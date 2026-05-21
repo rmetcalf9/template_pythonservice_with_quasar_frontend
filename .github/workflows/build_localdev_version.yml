@@ -170,7 +170,7 @@ jobs:
       - name: Configure kong for new service
         run: |
           source ./_repo_vars.sh && \
-          docker run --rm -i --network main_net --volume=/var/run:/var/run --volume=$(pwd):/working -w /working --entrypoint transferDirectory ${RJM_DOCKERWSCALLER_IMAGE} ./terraform/ ${MEMSET_CLOUD_ROOT}/data_to_backup/terraform/executions/${PROJECT_NAME} && \
+          docker run --rm -i --volume=$(pwd):/working -w /working --entrypoint transferDirectory ${RJM_DOCKERWSCALLER_IMAGE} ./terraform/ ${MEMSET_CLOUD_ROOT}/data_to_backup/terraform/executions/${PROJECT_NAME} && \
           ssh -p "${SSH_PORT}" \
             -i ~/.ssh/id_rsa \
             "${SSH_USER}@${SSH_HOST}" \
