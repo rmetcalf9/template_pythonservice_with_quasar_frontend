@@ -261,10 +261,10 @@ jobs:
       - name: Configure kong upstream for prod service
         run: |
           source ./_repo_vars.sh && \
+          docker run --rm -i --volume=${HOME}/.ssh/id_rsa:/root/.ssh/id_rdocker:ro --volume=$(pwd):/working -e SSH_PORT=${SSH_PORT} -w /working --entrypoint transferDirectory ${RJM_DOCKERWSCALLER_IMAGE} ${SSH_USER}@${SSH_HOST} ./terraform/ ${MEMSET_CLOUD_ROOT}/data_to_backup/terraform/executions/${PROJECT_NAME} && \
           ssh -p "${SSH_PORT}" \
             -i ~/.ssh/id_rsa \
             "${SSH_USER}@${SSH_HOST}" \
-            docker run --rm -i --volume=${HOME}/.ssh/id_rsa:/root/.ssh/id_rdocker:ro --volume=$(pwd):/working -e SSH_PORT=${SSH_PORT} -w /working --entrypoint transferDirectory ${RJM_DOCKERWSCALLER_IMAGE} ${SSH_USER}@${SSH_HOST} ./terraform/ ${MEMSET_CLOUD_ROOT}/data_to_backup/terraform/executions/${PROJECT_NAME} && \
             bash -s << EOF
               ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rsa -o StrictHostKeyChecking=no ${SSH_HOST} ${MEMSET_CLOUD_ROOT}/scripts/update_terraform_deployment.sh deploy ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME} ${RJM_VERSION}
               ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rsa -o StrictHostKeyChecking=no ${SSH_HOST} ${MEMSET_CLOUD_ROOT}/scripts/execute_terraform.sh ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME}
