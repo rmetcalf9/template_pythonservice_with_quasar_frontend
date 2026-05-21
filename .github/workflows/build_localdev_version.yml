@@ -182,7 +182,7 @@ jobs:
       - name: Test the newly deployed container using test endpoint
         run: |
           source ./_repo_vars.sh && \
-          sleep 2 && \
+          sleep 5 && \
           docker run --rm \
             -e HTTPORIGIN_TO_TEST=https://api.metcarob.com \
             -e APIAPP_DEFAULTHOMEADMINUSERNAME=codefresh_test_user \
