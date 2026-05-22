@@ -266,8 +266,8 @@ jobs:
             -i ~/.ssh/id_rsa \
             "${SSH_USER}@${SSH_HOST}" \
             bash -s << EOF
-              ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rsa -o StrictHostKeyChecking=no ${SSH_HOST} ${MEMSET_CLOUD_ROOT}/scripts/update_terraform_deployment.sh deploy ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME} ${RJM_VERSION}
-              ssh -p ${SSH_PORT} -i ${HOME}/.ssh/id_rsa -o StrictHostKeyChecking=no ${SSH_HOST} ${MEMSET_CLOUD_ROOT}/scripts/execute_terraform.sh ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME}
+              ${MEMSET_CLOUD_ROOT}/scripts/update_terraform_deployment.sh deploy ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME} ${RJM_VERSION}
+              ${MEMSET_CLOUD_ROOT}/scripts/execute_terraform.sh ${MEMSET_CLOUD_ROOT} ${PROJECT_NAME}
           EOF
 
 # configure-kong-upstream-for-prod-service:
