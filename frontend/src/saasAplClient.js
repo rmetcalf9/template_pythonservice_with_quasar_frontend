@@ -37,6 +37,7 @@ function requestUserRelogin (message, curpath, rjmStateChange) {
 function getProdVer (currentURL) {
   let searchStr = '/' + projectName + '/test/v'
   let testPos = currentURL.indexOf(searchStr)
+  console.log('registerEndpoints searchStr:', searchStr, ' currentURL:', currentURL)
   const searchStr2 = '/public/web/'
   if (testPos !== -1) {
     const midArg = currentURL.substring(currentURL.indexOf(searchStr) + searchStr.length)
@@ -55,6 +56,7 @@ function getProdVer (currentURL) {
   } else {
     searchStr = '/' + projectName + '/v'
     testPos = currentURL.indexOf(searchStr)
+    console.log('registerEndpoints searchStr:', searchStr, ' currentURL:', currentURL)
     if (testPos !== -1) {
       const midArg = currentURL.substring(currentURL.indexOf(searchStr) + searchStr.length)
       const secondPos = midArg.indexOf(searchStr2)
@@ -87,7 +89,7 @@ export function registerEndpointsWithStore (params) {
 
   if (params.runtype === 'proddomain') {
     const majorCodeVersion = rjmversion.codebasever.split('.')[0]
-    console.log('PROD taking api version from code', params.runtype, majorCodeVersion)
+    console.log('registerEndpoints PROD taking api version from code', params.runtype, majorCodeVersion)
     rjmStateChange.executeAction('registerLoginEndpoint', {
       baseUrl: prodLoginServiceBaseURL,
       tenantName: params.tenantName
@@ -103,7 +105,8 @@ export function registerEndpointsWithStore (params) {
       finishEndPointIdentificationHook: finishEndPointIdentificationHookFN
     })
   } else {
-    const prodVer = getProdVer(window.location.href, params.saasServiceName)
+    const prodVer = getProdVer(window.location.href)
+    console.log('registerEndpoints Got prod ver', prodVer)
     if (prodVer.prod) {
       console.log('PROD taking api version from url ', params.runtype)
       rjmStateChange.executeAction('registerLoginEndpoint', {
