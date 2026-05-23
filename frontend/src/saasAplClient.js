@@ -4,6 +4,7 @@
 */
 import rjmversion from './rjmversion.js'
 import saasApiClientEndpointIdentificationProcess from './saasApiClientEndpointIdentificationProcess'
+import { projectName } from './router/routes.js'
 
 // Change this variable to use different major bersions of login service
 const prodLoginServiceBaseURL = 'https://api.metcarob.com/saas_user_management/v0/'
@@ -33,8 +34,8 @@ function requestUserRelogin (message, curpath, rjmStateChange) {
   }
 }
 
-function getProdVer (currentURL, endpointName) {
-  let searchStr = '/' + endpointName + '/test/v'
+function getProdVer (currentURL) {
+  let searchStr = '/' + projectName + '/test/v'
   let testPos = currentURL.indexOf(searchStr)
   const searchStr2 = '/public/web/'
   if (testPos !== -1) {
@@ -52,7 +53,7 @@ function getProdVer (currentURL, endpointName) {
       prefix: currentURL.substring(0, currentURL.indexOf(searchStr)) + searchStr + parseInt(midArg.substring(0, secondPos))
     }
   } else {
-    searchStr = '/' + endpointName + '/v'
+    searchStr = '/' + projectName + '/v'
     testPos = currentURL.indexOf(searchStr)
     if (testPos !== -1) {
       const midArg = currentURL.substring(currentURL.indexOf(searchStr) + searchStr.length)

@@ -6,6 +6,7 @@ import saasApiClientServerRequestQueue from '../saasApiClientServerRequestQueue'
 const prodDomain = 'platform.challengeswipe.com'
 const preferredTenantName = 'defaulttenant'
 export const saasServiceName = 'saas_' + preferredTenantName
+export const projectName = 'templateservicename' // Must match what is output from _repo_vars PROJECT_NAME
 const preferredFullLocation = 'https://' + prodDomain + '/#/' + preferredTenantName + '/'
 
 function allowNotLoggedInForPath (tenantName, path) {
