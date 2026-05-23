@@ -9,6 +9,9 @@ MAINTAINER Robert Metcalf
 # -----------------------------
 # Environment
 # -----------------------------
+ARG PROJECT_NAME
+ENV APIAPP_PROJECT_NAME=${PROJECT_NAME}
+
 ENV APP_DIR=/app
 ENV APIAPP_FRONTEND=/frontend
 ENV APIAPP_FRONTEND_FRONTEND=/frontend

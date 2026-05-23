@@ -57,7 +57,7 @@ jobs:
       - name: Build main image
         run: |
           source ./_repo_vars.sh && \
-          docker build -t ${DOCKER_USERNAME}/${PROJECT_NAME}:${RJM_VERSION} .
+          docker build --build-arg PROJECT_NAME="${PROJECT_NAME}" -t ${DOCKER_USERNAME}/${PROJECT_NAME}:${RJM_VERSION} .
 
       - name: Build test image
         run: |
