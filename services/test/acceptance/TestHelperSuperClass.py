@@ -21,6 +21,7 @@ httpOrigin = 'http://a.com'
 infoAPIPrefix = '/api/public/info'
 
 env = {
+  'APIAPP_PROJECT_NAME': 'app_in_test_mode',
   'APIAPP_VAULT_URL': 'MOCK',
   'APIAPP_VAULT_ROLE_ID': 'MOCK',
   'APIAPP_VAULT_SECRET_ID': 'MOCK',

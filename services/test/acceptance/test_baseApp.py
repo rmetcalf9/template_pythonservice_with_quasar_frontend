@@ -23,6 +23,7 @@ class test_adminapi(helpers):
 
     expectedRes = {
       'Server': {
+        'APIAPP_PROJECT_NAME': 'app_in_test_mode',
         'APIAPP_APIDOCSURL': '_',
         'Version': 'TEST-3.3.3',
         'APIAPP_FRONTENDURL': TestHelperSuperClass.env['APIAPP_FRONTENDURL']
