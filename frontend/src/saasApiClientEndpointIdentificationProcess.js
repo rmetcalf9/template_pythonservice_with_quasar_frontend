@@ -5,7 +5,6 @@ import axios from 'axios'
 import { projectName } from './router/routes.js'
 
 function isCorrectServerInfoForThisProject (serverinfo) {
-  console.log('TODO isCorrectServerInfoForThisProject', serverinfo)
   if (typeof (serverinfo.Server) === 'undefined') {
     return false
   }
