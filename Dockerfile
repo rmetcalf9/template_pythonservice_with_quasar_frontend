@@ -12,6 +12,8 @@ MAINTAINER Robert Metcalf
 ARG PROJECT_NAME
 ENV APIAPP_PROJECT_NAME=${PROJECT_NAME}
 
+ARG QUASARBUILDMODE
+
 ENV APP_DIR=/app
 ENV APIAPP_FRONTEND=/frontend
 ENV APIAPP_FRONTEND_FRONTEND=/frontend
@@ -75,7 +77,7 @@ COPY ./services/src ${APP_DIR}
 
 RUN /venv/bin/pip install --no-cache-dir -r ${APP_DIR}/requirements.txt
 
-COPY ./frontend/dist/pwa ${APIAPP_FRONTEND_FRONTEND}
+COPY ./frontend/dist/${QUASARBUILDMODE} ${APIAPP_FRONTEND_FRONTEND}
 COPY ./VERSION /VERSION
 COPY ./services/run_app_docker.sh /run_app_docker.sh
 COPY ./nginx_default.conf /etc/nginx/conf.d/default.conf

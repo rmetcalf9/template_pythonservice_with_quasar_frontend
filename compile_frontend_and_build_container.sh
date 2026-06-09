@@ -33,7 +33,7 @@ fi
 echo "Build docker container (RJM_VERSION=${RJM_VERSION})"
 #This file does no version bumping
 cd ${GITROOT}
-eval docker build . -t ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${RJM_VERSION}_localbuild
+eval docker build --build-arg PROJECT_NAME="${PROJECT_NAME}" --build-arg QUASARBUILDMODE="${QUASARBUILDMODE}" -t ${DOCKER_USERNAME}/${DOCKER_IMAGENAME}:${RJM_VERSION}_localbuild .
 RES=$?
 if [ ${RES} -ne 0 ]; then
   echo ""
