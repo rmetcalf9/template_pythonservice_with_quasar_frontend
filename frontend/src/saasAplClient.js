@@ -95,8 +95,8 @@ export function registerEndpointsWithStore (params) {
       tenantName: params.tenantName
     })
 
-    // https://api.metcarob.com/saas_linkvis/v0
-    const possibleApiPrefixes = [{ prefix: 'https://api.metcarob.com/' + params.saasServiceName + '/v' + majorCodeVersion, connectingthroughnginx: true, apitype: 'public' }]
+    // https://api2.metcarob.com/saas_linkvis/v0
+    const possibleApiPrefixes = [{ prefix: 'https://api2.metcarob.com/' + params.saasServiceName + '/v' + majorCodeVersion, connectingthroughnginx: true, apitype: 'public' }]
     rjmStateChange.executeAction('registerEndpoint', {
       endpointName: params.saasServiceName,
       apiPrefixIdentificationProcessConfig: {

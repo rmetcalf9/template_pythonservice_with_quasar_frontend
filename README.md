@@ -9,19 +9,13 @@ I have also extended it for with my standard Terraform setup.
 ## Pre-deploy setup
 
 Find and replace service name occurrences (templateservicename -> new name):
-
- - Dockerfile
- - run localbuild
- - frontend/saasClientAPI
- - terraform main
- - local_terraform
- - testContainer
- - services/_start_local_saas_user_management_service_config.json
+Start with _repo_vars.sh you will see the new name matches the github reponame.
 
 In _repo_vars.sh delete the line that overrides the project directory to templateservicename
 
-Find and replace defaulttenant to the tenant name. E.g. for saas_social I made the default social. This is for when the
-frontend connects to usermanagement.
+defaulttenant is what the app routes to in url's and what it is registered in
+saas_user_management with. Find and replace all defaulttenant occurances
+
 Create the tenenat with this name in usermanagement.
 
 In _repo_vars update the versions of build containers I use:
@@ -53,36 +47,42 @@ pip install -r ./services/testContainer/requirements.txt
  - ./services/continous_test.sh works
  - ./services/run_app_developer.sh works
  - /frontend run quasar dev works
- - ./run_all_parts_on_dev_machine.sh - check serverinfo is being read correctly
+ - ./run_all_parts_on_dev_machine.sh - check serverinfo is being read correctly USE 127.0.0.1
  - ./compile_frontend_and_build_container.sh works
  - ./run_localbuild_container.sh works and serverinfo is read correctly
 
 ## Deploy Setup
 
-create secrets
-Use the tool: memsetappvaultsetup
-sets up dev and prod exec roles and prod deploy role
+On new infrastructure mainly automatic.
+Go to the platform, in the override module under default -> webapp_project_names
+add the name of this project.
 
-It will tell you to add github secrets
-VAULT_ADDR
-VAULT_ROLE_ID   (for deploy role)
-VAULT_SECRET_ID  (for deploy role)
+Run the deploy and it will create the roles and secrets required.
+When done head to: asfplatform/deploymentapproles/deploy_webapp_{project_name}
+You will get the role_id and secret_id for the template
 
+These get loaded into github goto project -> settings -> secrets and variables -> actions
+add
+VAULT_ADDR -> https://vault.metcarob.com
+VAULT_ROLE_ID -> from above
+VAULT_SECRET_ID -> from above
 
-## Create dockerhub deploy secret
+In the repository also goto settings -> actions -> Workflow permissions
+and make sure it's read write.
 
-create secret and store it at:
-kv/data/robert_accounts/dockerhub/personal_access_tokens/${PROJECT_NAME}_deployment
+After the first deployment you will see the pacakge in github.
+click on it. on the right is package settings
+at the bottom you can make it private
 
 ## Deploy testing
 
 If the deployment works we should be good!
 
- - https://api.metcarob.com/templateservicename/v0/public/web/frontend/#/ works and loads serverinfo
- - curl https://api.metcarob.com/templateservicename/v0/public/api/info/serverinfo works
+ - https://api2.metcarob.com/templateservicename/v0/public/web/frontend/#/ works and loads serverinfo
+ - curl https://api2.metcarob.com/templateservicename/v0/public/api/info/serverinfo works
 
 Log in to usermanagement - this should work
 
 ## Finally
 
- - Add endpoint to my service monitoring. (At least serverinfo and index pages)
+ - Add endpoint to my service monitoring spreadsheet. (At least serverinfo and index pages) https://docs.google.com/spreadsheets/d/18cpQLWf2OrPjCyyzhI3T1_W8q7CQvh3LUjGQvdp2pEc/edit?gid=0#gid=0

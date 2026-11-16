@@ -115,7 +115,6 @@ export default {
       saasApiClientCallBackend.callApi({
         prefix: 'info',
         router: this.$router,
-        store: this.store,
         path: '/serverinfo',
         method: 'get',
         postdata: undefined,

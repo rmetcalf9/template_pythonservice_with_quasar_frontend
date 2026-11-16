@@ -64,7 +64,7 @@ if [ E${EXTPORT80} = "E" ]; then
   exit 1
 fi
 
-VAULT_DEV_APP_ROLE_LOC="memset/approles/${PROJECT_NAME}_dev"
+VAULT_DEV_APP_ROLE_LOC="asfplatform/deploymentapproles/run_dev_webapp_${PROJECT_NAME}"
 APIAPP_VAULT_ROLE_ID=$(qvault kv get -mount=kv -field=role_id ${VAULT_DEV_APP_ROLE_LOC})
 RES=$?
 if [ ${RES} -ne 0 ]; then

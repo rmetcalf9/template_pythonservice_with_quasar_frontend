@@ -187,7 +187,7 @@ function redirectToProperDomain () {
   // return
   // {
   //   wasRedirected: true if redirection is required, false otherwise
-  //   runtype: 'proddomain' - if running in prodDomain, 'prodapi' if running in api.metcarob.com, 'dev' otherwise
+  //   runtype: 'proddomain' - if running in prodDomain, 'prodapi' if running in api2.metcarob.com, 'dev' otherwise
   // }
   // host api.metcarob.com can never be http - kong will block
   // host www.thumbsum.co must be moved non-www and https if not already
@@ -213,7 +213,7 @@ function redirectToProperDomain () {
     }
     runtype = 'proddomain'
   } else { // not prod domain
-    if (location.hostname === 'api.metcarob.com') {
+    if (location.hostname === 'api2.metcarob.com') {
       runtype = 'prodapi'
     } else {
       if (location.hostname !== 'localhost') {
